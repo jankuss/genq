@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      # Typically the builder key is just the package name, run
+      # `dart run build_runner doctor` to check your config.
+      freezed:
+        generate_for:
+          # Example glob for only the Dart files under `lib/models`
+          - lib/gen/*.bench.dart

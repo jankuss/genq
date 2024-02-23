@@ -1,0 +1,14 @@
+name: fixtures
+publish_to: none
+description: >-
+  Fixtures for testing the genq package.
+version: 1.2.3
+homepage: https://example-pet-store.com/newtify
+documentation: https://example-pet-store.com/newtify/docs
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  
+dependencies:
+  genq: 
+    path: ../../../packages/genq

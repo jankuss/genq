@@ -1,0 +1,1 @@
+hyperfine --parameter-step-size 1 --parameter-scan count 1 10 --prepare './reset.sh && dart ./bin/gen.dart {count}' 'dart run build_runner build --delete-conflicting-outputs' --export-json ./benchmark.json
