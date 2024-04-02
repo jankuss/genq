@@ -21,11 +21,10 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 
-    v, err := cmd.Flags().GetBool("version")
-    if err != nil {
-      panic(err)
-    }
-
+		v, err := cmd.Flags().GetBool("version")
+		if err != nil {
+			panic(err)
+		}
 
 		fmt.Println("   __ _  ___ _ __   __ _ ")
 		fmt.Println("  / _` |/ _ \\ '_ \\ / _` |")
@@ -38,28 +37,28 @@ var rootCmd = &cobra.Command{
 		fmt.Println("Blazingly fast code generator for Dart and Flutter")
 		fmt.Println("===================================================")
 		fmt.Println()
-    if v {
-      fmt.Println("version:", version)
-      fmt.Println("commit:", commit)
-      fmt.Println("date:", date)
-      os.Exit(0)
-      return;
-    }
+		if v {
+			fmt.Println("version:", version)
+			fmt.Println("commit:", commit)
+			fmt.Println("date:", date)
+			os.Exit(0)
+			return
+		}
 
 		generate(inputPath, format)
 	},
 }
 
 var (
-    version = "dev"
-    commit  = "none"
-    date    = "unknown"
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
 )
 
 func Execute() {
 	rootCmd.Flags().StringP("input", "i", ".", "The input file or directory to generate code from")
 	rootCmd.Flags().BoolP("format", "f", false, "Format the generated code with dart format")
-  rootCmd.Flags().Bool("version", false, "Prints the version of genq")
+	rootCmd.Flags().Bool("version", false, "Prints the version of genq")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
