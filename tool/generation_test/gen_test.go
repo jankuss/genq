@@ -48,3 +48,7 @@ func TestFunctionTypes(t *testing.T) {
 func TestEmpty(t *testing.T) {
   testGenOutput(t, "empty");
 }
+
+func TestParameterAnnotations(t *testing.T) {
+  testGenOutput(t, "parameter_annotations");
+}
