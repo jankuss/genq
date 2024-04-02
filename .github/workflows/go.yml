@@ -84,7 +84,7 @@ jobs:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
           version: latest
-          args: build --clean --skip-validate
+          args: build --clean --snapshot
           workdir: ./tool
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
