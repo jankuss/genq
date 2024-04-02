@@ -52,3 +52,7 @@ func TestEmpty(t *testing.T) {
 func TestParameterAnnotations(t *testing.T) {
   testGenOutput(t, "parameter_annotations");
 }
+
+func TestNotRequiredParam(t *testing.T) {
+  testGenOutput(t, "not_required_param");
+}

@@ -10,10 +10,7 @@ Inspired by **freezed**, genq offers a familiar syntax for defining data classes
 
 **Here's what genq brings to the table:**
 
-* **Reduce Boilerplate:** genq generates the boilerplate code for you, so you can focus on what matters:
-    * **copyWith:** Create copies of your data classes with modified fields.
-    * **toString:** Generate human-readable string representations of your data classes.
-    * **==**: Compare data classes for equality.
+* **Reduce Boilerplate:** genq generates the boilerplate code for you, so you can focus on what matters.
 * **Speed Demon:** Generate data classes in a flash, even for large projects.
 * **Simple and Familiar:** Syntax similar to freezed, making it easy to learn and use.
 
@@ -66,6 +63,8 @@ class User with _$User {
 }
 ```
 
+Read more about defining your data classes [here](#defining-data-classes).
+
 ### 4. Generate the code
 
 Run the genq command in your project directory, and you will have your desired data classes generated in no time:
@@ -73,6 +72,38 @@ Run the genq command in your project directory, and you will have your desired d
 ```
 genq
 ```
+
+## Defining Data Classes
+
+To define a data class, annotate a class with `@genq` and provide a factory constructor. The factory constructor should have named parameters for all desired fields in the class. The factory constructor should also have a `= _<ClassName>` redirecting constructor.
+
+```dart
+@genq // <- Annotate the class with @genq
+class User with _$User { // <- Add the mixin _$<ClassName>
+  factory User({ // <- Define a factory constructor
+    required String name, // <- Define fields as named parameters
+    required int age,
+  }) = _User; // <- Redirecting constructor, _<ClassName>
+}
+```
+
+The generated class will have the following methods:
+- `copyWith`: Create a copy of the data class with modified fields.
+- `toString`: Generate a human-readable string representation of the data class.
+- `==`: Compare two data classes for equality.
+
+## How?
+
+genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than build_runner, which uses the analyzer. Code generation is also done in parallel for each file, which further speeds up the process.
+
+## Notes on the subset parser
+
+The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues)
+
+## Downsides of `genq`
+
+- `build_runner` is extensible & pluggable and can be used for a wide variety of tasks, whereas `genq` is focused on data class generation. Freezed for example leverages this to generate JSON Serialization code using `json_serializable`.
+- `genq` is written in Go, so it does not neatly integrate with the Dart ecosystem.
 
 ## Future Plans
 
