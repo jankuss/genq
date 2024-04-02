@@ -62,7 +62,7 @@ class _TestClazz implements TestClazz {
   }
 }`)
 
-  compare(t, actual, expect)
+	compare(t, actual, expect)
 }
 
 func TestEmpty(t *testing.T) {
@@ -100,5 +100,5 @@ class _TestClazz implements TestClazz {
   }
 }`)
 
-  compare(t, actual, expect)
+	compare(t, actual, expect)
 }

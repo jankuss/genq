@@ -7,7 +7,7 @@ import (
 func TestDefaultTemplateMixin(t *testing.T) {
 	actual := []string{}
 
-  parsed := getFirstGenqClass(`
+	parsed := getFirstGenqClass(`
   @genq
   class TestClazz {
     factory TestClazz({
@@ -15,7 +15,7 @@ func TestDefaultTemplateMixin(t *testing.T) {
       required int age,
       required List<String> friends,
     });
-  }`);
+  }`)
 	actual = templateMixin(actual, parsed)
 
 	expect := getNormalized(`
@@ -27,6 +27,5 @@ mixin _$TestClazz {
   $TestClazzCopyWith get copyWith => throw UnimplementedError();
 }`)
 
-  compare(t, actual, expect)
+	compare(t, actual, expect)
 }
-

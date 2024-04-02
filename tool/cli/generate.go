@@ -59,9 +59,9 @@ func generate(path string, format bool) {
 				return
 			}
 
-      if len(res.WriteString) > 0 {
-        os.WriteFile(res.OutputFile, []byte(strings.Join(res.WriteString, "\n")), 0644)
-      }
+			if len(res.WriteString) > 0 {
+				os.WriteFile(res.OutputFile, []byte(strings.Join(res.WriteString, "\n")), 0644)
+			}
 
 			messages <- resWithPath{
 				path: path,
@@ -78,15 +78,16 @@ func generate(path string, format bool) {
 	}()
 
 	resCount := 0
-  genCount := 0
+	genCount := 0
 	args := []string{"format"}
-	fmt.Print("\033[s")
 	for i := range messages {
-    genCount += i.res.GenCount
+		genCount += i.res.GenCount
 
 		resCount++
-		fmt.Print("\033[u\033[K")
-		fmt.Printf("📝 Generated %s", i.res.OutputFile)
+
+		if !i.res.Noop {
+			fmt.Printf("📝 Generated %s\n", i.res.OutputFile)
+		}
 
 		if len(i.res.Errors) > 0 {
 			for _, error := range i.res.Errors {
@@ -99,9 +100,7 @@ func generate(path string, format bool) {
 		}
 	}
 
-	println()
-
-  fmt.Printf("✅ Generated %d data classes\n", genCount)
+	fmt.Printf("✅ Generated %d data classes\n", genCount)
 
 	if format {
 		fmt.Printf("ℹ️ Running 'dart format' on %d files\n", len(args)-1)
