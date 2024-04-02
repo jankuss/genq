@@ -4,7 +4,7 @@
 
 **Tired of waiting for build_runner to churn through your codebase?**
 
-genq cuts through the wait and generates data classes for your Dart projects in seconds, not minutes. ⚡️
+genq cuts through the wait and generates data classes for your Dart projects in milliseconds, not minutes. ⚡️
 
 Inspired by **freezed**, genq offers a familiar syntax for defining data classes, but with a focus on **lightning-fast performance**. No need to write copyWith, toString, or equals methods by hand - genq does it all for you.
 
@@ -78,6 +78,10 @@ genq
 To define a data class, annotate a class with `@genq` and provide a factory constructor. The factory constructor should have named parameters for all desired fields in the class. The factory constructor should also have a `= _<ClassName>` redirecting constructor.
 
 ```dart
+import 'package:genq/genq.dart'; // <- Import genq
+
+part 'user.genq.dart'; // <- Add a part directive to the generated file
+
 @genq // <- Annotate the class with @genq
 class User with _$User { // <- Add the mixin _$<ClassName>
   factory User({ // <- Define a factory constructor
@@ -98,7 +102,7 @@ genq uses its own subset parser of the dart language and generates code directly
 
 ## Notes on the subset parser
 
-The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues)
+The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues/new) with the code that caused the error.
 
 ## Downsides of `genq`
 
