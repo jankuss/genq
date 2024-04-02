@@ -103,7 +103,7 @@ The generated class will have the following methods:
 
 genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than `build_runner`, which uses the `analyzer` package. Code generation is also done in parallel for each file, which further speeds up the process.
 
-
+Also, the code generator only cares about the information within the data class definition, which allows it to ignore the rest of the codebase.
 
 ## Notes on the subset parser
 
