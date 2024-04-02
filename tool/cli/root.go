@@ -37,23 +37,10 @@ var rootCmd = &cobra.Command{
 		fmt.Println("Blazingly fast code generator for Dart and Flutter")
 		fmt.Println("===================================================")
 		fmt.Println()
-		if v {
-			fmt.Println("version:", version)
-			fmt.Println("commit:", commit)
-			fmt.Println("date:", date)
-			os.Exit(0)
-			return
-		}
 
 		generate(inputPath, format)
 	},
 }
-
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-)
 
 func Execute() {
 	rootCmd.Flags().StringP("input", "i", ".", "The input file or directory to generate code from")
