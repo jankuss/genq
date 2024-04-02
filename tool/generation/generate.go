@@ -12,7 +12,7 @@ import (
 // Given a string and a position, return the line number, the position in the
 // line and the string of the line
 func GetContextForPosition(input string, pos int) ContextForPosition {
-	line := 0
+	  line := 0
 	posInLine := 0
 	lineString := ""
 
