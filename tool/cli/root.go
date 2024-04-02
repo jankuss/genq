@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 
-		v, err := cmd.Flags().GetBool("version")
+		_, err = cmd.Flags().GetBool("version")
 		if err != nil {
 			panic(err)
 		}
