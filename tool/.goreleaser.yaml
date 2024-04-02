@@ -22,8 +22,6 @@ builds:
       - linux
       - windows
       - darwin
-    ldflags: 
-      - -s -w -X cli.version={{.Version}} -X cli.commit={{.Commit}} -X cli.date={{.Date}} -X cli.builtBy=goreleaser
 
 archives:
   - format: tar.gz
