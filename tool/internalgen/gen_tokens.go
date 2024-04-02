@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-/// This script geneates a tokens.go file from a token_map.json file. This is just
-/// a helper script to avoid having to manually write the tokens.go file.
+// / This script geneates a tokens.go file from a token_map.json file. This is just
+// / a helper script to avoid having to manually write the tokens.go file.
 func main() {
 	file, err := os.ReadFile("./token_map.json")
 	if err != nil {

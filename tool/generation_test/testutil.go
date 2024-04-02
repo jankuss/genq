@@ -36,7 +36,7 @@ func testGenOutput(t *testing.T, folder string) {
 		return readInput(fmt.Sprintf("./fixtures/%s/input.dart", folder)), nil
 	}
 
-	res, err := Generate("./input.dart", read,)
+	res, err := Generate("./input.dart", read)
 	if err != nil {
 		t.Fatalf("Did not expect error: %s", err)
 	}

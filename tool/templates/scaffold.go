@@ -89,7 +89,7 @@ func templateConstructor(str []string, params GenqClass) []string {
 
 	if len(params.Constructor.Params) > 0 {
 		str = append(str, indent(4, fmt.Sprintf("return Object.hash(")))
-    str = append(str, indent(6, "runtimeType,"))
+		str = append(str, indent(6, "runtimeType,"))
 		for _, param := range params.Constructor.Params {
 			str = append(str, indent(6, fmt.Sprintf("%s,", param.Name)))
 		}
@@ -111,7 +111,7 @@ func templateEqualityBody(str []string, params GenqClass) []string {
 
 	for _, param := range params.Constructor.Params {
 		if param.ParamType.IsCollectionType() {
-      str = append(str, indent(4, fmt.Sprintf("if (!const DeepCollectionEquality().equals(other.%s, %s)) return false;", param.Name, param.Name)));
+			str = append(str, indent(4, fmt.Sprintf("if (!const DeepCollectionEquality().equals(other.%s, %s)) return false;", param.Name, param.Name)))
 		} else {
 			str = append(str, indent(4, fmt.Sprintf("if (!identical(other.%s, %s) && other.%s != %s) return false;", param.Name, param.Name, param.Name, param.Name)))
 		}

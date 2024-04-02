@@ -52,11 +52,11 @@ func (t GenqParamList) String() string {
 }
 
 func (t GenqNamedParam) String() string {
-  str := ""
-  if t.Required {
-    str += "required "
-  }
-  str += t.ParamType.String()
-  str += " " + t.Name
-  return str
+	str := ""
+	if t.Required {
+		str += "required "
+	}
+	str += t.ParamType.String()
+	str += " " + t.Name
+	return str
 }

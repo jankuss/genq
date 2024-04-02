@@ -5,7 +5,6 @@ import (
 	. "genq/parser"
 )
 
-
 func typeFromJsonNullable(typeRef GenqTypeReference, valueName string) string {
 	str := typeFromJson(typeRef, valueName)
 

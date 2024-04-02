@@ -111,7 +111,7 @@ func Generate(path string, readContent ReadContent) (GenerateResult, error) {
 	if len(generatorContext.outputLines) > 0 {
 		generatedPath := path[:len(path)-extLength] + ".genq" + ext
 		partOf := fmt.Sprintf("part of '%s';", filepath.Base(path))
-    
+
 		allLines := append([]string{partOf, ""}, generatorContext.outputLines...)
 
 		if err != nil {

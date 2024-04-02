@@ -6,4 +6,3 @@ type TokenMapping struct {
 	regex *regexp.Regexp
 	token TokenType
 }
-

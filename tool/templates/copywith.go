@@ -41,7 +41,7 @@ func templateCopyWith(str []string, params GenqClass) []string {
 		str = append(str, indent(2, fmt.Sprintf("}")))
 	} else {
 		str = append(str, indent(2, fmt.Sprintf("%s call() {", params.Name)))
-    str = append(str, indent(4, fmt.Sprintf("return %s();", params.Name)))
+		str = append(str, indent(4, fmt.Sprintf("return %s();", params.Name)))
 		str = append(str, indent(2, fmt.Sprintf("}")))
 	}
 	str = append(str, fmt.Sprintf("}"))

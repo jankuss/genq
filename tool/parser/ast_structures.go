@@ -1,4 +1,4 @@
-package parser;
+package parser
 
 type GenqClass struct {
 	Name                  string
@@ -13,9 +13,9 @@ type GenqTypeReference struct {
 	Optional     bool
 	GenericTypes []GenqTypeReference
 	FunctionType *FunctionType
-  ReturnType   *GenqTypeReference
-  ParamList    GenqParamList
-  IsFunction   bool
+	ReturnType   *GenqTypeReference
+	ParamList    GenqParamList
+	IsFunction   bool
 }
 
 type GenqAnnotation struct {
@@ -54,11 +54,11 @@ type GenqJsonKeyAnnotation struct {
 }
 
 type GenqPositionalParam struct {
-  ParamType GenqTypeReference
-  Name string
+	ParamType GenqTypeReference
+	Name      string
 }
 
 type GenqParamList struct {
-  PositionalParams []GenqPositionalParam
-  NamedParams []GenqNamedParam
+	PositionalParams []GenqPositionalParam
+	NamedParams      []GenqNamedParam
 }

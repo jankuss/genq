@@ -104,11 +104,11 @@ func NewParser(str string) *Parser {
 // Sometimes though, it is necessary to parse optimistically and check wether or not
 // an error occurs.
 func (p *Parser) markRestorationPoint() {
-  // To support multiple restoration points, we keep a stack of restoration points.
+	// To support multiple restoration points, we keep a stack of restoration points.
 	p.restorationPoints = append(p.restorationPoints, restorationPoint{
 		lookaheadValue: p.lookaheadValue,
 		lookahead:      p.lookahead,
-    cursor:         p.lexer.cursor,
+		cursor:         p.lexer.cursor,
 	})
 }
 
@@ -121,7 +121,7 @@ func (p *Parser) restore() {
 
 	p.lookahead = restorationPoint.lookahead
 	p.lookaheadValue = restorationPoint.lookaheadValue
-  p.lexer.cursor = restorationPoint.cursor
+	p.lexer.cursor = restorationPoint.cursor
 }
 
 type restorationPoint struct {
@@ -288,22 +288,22 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 		Name:         typeIdentifier,
 		Optional:     optional,
 		GenericTypes: genericTypes,
-    IsFunction:   false,
+		IsFunction:   false,
 	}
 
 	for p.isReturnTypeOfFunction() {
 		p.eat(TOKEN_IDENTIFIER)
-    paramList, err := p.parseParamList()
+		paramList, err := p.parseParamList()
 
-    if err != nil {
-      return GenqTypeReference{}, err
-    }
+		if err != nil {
+			return GenqTypeReference{}, err
+		}
 
-    prev := typeRef;
+		prev := typeRef
 		typeRef = GenqTypeReference{
 			ReturnType: &prev,
-      IsFunction: true,
-      ParamList: paramList,
+			IsFunction: true,
+			ParamList:  paramList,
 		}
 	}
 
@@ -311,71 +311,71 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 }
 
 func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
-  p.eat(TOKEN_PAREN_START)
+	p.eat(TOKEN_PAREN_START)
 
-  positionalParams := []GenqPositionalParam{}
-  namedParams := []GenqNamedParam{}
+	positionalParams := []GenqPositionalParam{}
+	namedParams := []GenqNamedParam{}
 
-  for (p.lookahead != TOKEN_PAREN_END && p.lookahead != TOKEN_CURLY_START) {
-    if p.lookahead == TOKEN_IDENTIFIER {
-      typeRef, err := p.parseTypeReference()
-      if err != nil {
-        return GenqParamList{}, err;
-      }
+	for p.lookahead != TOKEN_PAREN_END && p.lookahead != TOKEN_CURLY_START {
+		if p.lookahead == TOKEN_IDENTIFIER {
+			typeRef, err := p.parseTypeReference()
+			if err != nil {
+				return GenqParamList{}, err
+			}
 
-      name, err := p.eat(TOKEN_IDENTIFIER)
-      if err != nil {
-        return GenqParamList{}, err;
-      }
+			name, err := p.eat(TOKEN_IDENTIFIER)
+			if err != nil {
+				return GenqParamList{}, err
+			}
 
-      if p.lookahead == TOKEN_COMMA {
-        _, err := p.eat(TOKEN_COMMA)
-        if err != nil {
-          return GenqParamList{}, err;
-        }
-      }
+			if p.lookahead == TOKEN_COMMA {
+				_, err := p.eat(TOKEN_COMMA)
+				if err != nil {
+					return GenqParamList{}, err
+				}
+			}
 
-      positionalParams = append(positionalParams, GenqPositionalParam{
-        ParamType: typeRef,
-        Name: name,
-      })
-    }
-  }
+			positionalParams = append(positionalParams, GenqPositionalParam{
+				ParamType: typeRef,
+				Name:      name,
+			})
+		}
+	}
 
-  if p.lookahead == TOKEN_CURLY_START {
-    _, err := p.eat(TOKEN_CURLY_START)
-    if err != nil {
-      return GenqParamList{}, err;
-    }
+	if p.lookahead == TOKEN_CURLY_START {
+		_, err := p.eat(TOKEN_CURLY_START)
+		if err != nil {
+			return GenqParamList{}, err
+		}
 
-    for (p.lookahead != TOKEN_CURLY_END) {
-      namedParam, err := p.parseNamedParam()
-      if err != nil {
-        return GenqParamList{}, err;
-      }
+		for p.lookahead != TOKEN_CURLY_END {
+			namedParam, err := p.parseNamedParam()
+			if err != nil {
+				return GenqParamList{}, err
+			}
 
-      namedParams = append(namedParams, namedParam)
+			namedParams = append(namedParams, namedParam)
 
-      if p.lookahead == TOKEN_COMMA {
-        _, err := p.eat(TOKEN_COMMA)
-        if err != nil {
-          return GenqParamList{}, err;
-        }
-      }
-    }
+			if p.lookahead == TOKEN_COMMA {
+				_, err := p.eat(TOKEN_COMMA)
+				if err != nil {
+					return GenqParamList{}, err
+				}
+			}
+		}
 
-    _, err = p.eat(TOKEN_CURLY_END)
-    if err != nil {
-      return GenqParamList{}, err;
-    }
-  }
+		_, err = p.eat(TOKEN_CURLY_END)
+		if err != nil {
+			return GenqParamList{}, err
+		}
+	}
 
-  p.eat(TOKEN_PAREN_END)
+	p.eat(TOKEN_PAREN_END)
 
-  return GenqParamList{
-    PositionalParams: positionalParams,
-    NamedParams: namedParams,
-  }, nil
+	return GenqParamList{
+		PositionalParams: positionalParams,
+		NamedParams:      namedParams,
+	}, nil
 }
 
 func (p *Parser) parseGenqClass() (GenqClass, *ParsingError) {
@@ -559,16 +559,16 @@ func (p *Parser) parseGenqConstructorSignature() (GenqConstructorSignature, *Par
 		return GenqConstructorSignature{}, err
 	}
 
-  if p.lookahead == TOKEN_PAREN_END { 
-    _, err := p.eat(TOKEN_PAREN_END)
-    if err != nil {
-      return GenqConstructorSignature{}, err
-    }
+	if p.lookahead == TOKEN_PAREN_END {
+		_, err := p.eat(TOKEN_PAREN_END)
+		if err != nil {
+			return GenqConstructorSignature{}, err
+		}
 
-    return GenqConstructorSignature{
-      Params: []GenqNamedParam{},
-    }, nil
-  }
+		return GenqConstructorSignature{
+			Params: []GenqNamedParam{},
+		}, nil
+	}
 
 	_, err = p.eat(TOKEN_CURLY_START)
 	if err != nil {
