@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
 		fmt.Println("===================================================")
 		fmt.Println()
     if v {
-      fmt.Println("genq version:", version)
+      fmt.Println("version:", version)
       fmt.Println("commit:", commit)
       fmt.Println("date:", date)
       os.Exit(0)
