@@ -92,6 +92,6 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ./tool/dist
+          name: dist
           path: |
-            dist
+            ./tool/dist
