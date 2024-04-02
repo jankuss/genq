@@ -75,7 +75,10 @@ genq
 
 ## Defining Data Classes
 
-To define a data class, annotate a class with `@genq` and provide a factory constructor. The factory constructor should have named parameters for all desired fields in the class. The factory constructor should also have a `= _<ClassName>` redirecting constructor.
+To define a data class, first you need to annotate your class with `@genq`. Also, you need to use the generated mixin with the name `_$<ClassName>`.
+Additionally, you need to define a factory constructor with named parameters and a redirecting constructor with the name `_<ClassName>`.
+
+At first, you might get errors from the IDE because the generated file is not yet created. After running `genq`, the errors should disappear.
 
 ```dart
 import 'package:genq/genq.dart'; // <- Import genq
@@ -98,7 +101,9 @@ The generated class will have the following methods:
 
 ## How?
 
-genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than build_runner, which uses the analyzer. Code generation is also done in parallel for each file, which further speeds up the process.
+genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than `build_runner`, which uses the `analyzer` package. Code generation is also done in parallel for each file, which further speeds up the process.
+
+Also, the code generator only cares about the information within the data class definition, which allows it to ignore the rest of the codebase.
 
 ## Notes on the subset parser
 
