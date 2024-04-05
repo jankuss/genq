@@ -32,7 +32,10 @@ class _User implements User {
 
   @override
   int get hashCode {
-    return data.hashCode;
+    return Object.hash(
+      runtimeType,
+      data,
+    );
   }
 }
 

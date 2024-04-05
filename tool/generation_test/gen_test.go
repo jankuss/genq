@@ -56,3 +56,11 @@ func TestParameterAnnotations(t *testing.T) {
 func TestNotRequiredParam(t *testing.T) {
 	testGenOutput(t, "not_required_param")
 }
+
+func TestJsonBasic(t *testing.T) {
+	testGenOutput(t, "json_basic")
+}
+
+func TestJsonEnum(t *testing.T) {
+	testGenOutput(t, "json_enum")
+}

@@ -188,7 +188,7 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 		}
 
 		return GenqValue{
-			StringValue: v,
+			StringValue: v[1 : len(v)-1],
 		}, nil
 	}
 
@@ -607,11 +607,13 @@ func (p *Parser) parseNamedParam() (GenqNamedParam, *ParsingError) {
 	annotation := GenqAnnotation{}
 
 	if p.lookahead == TOKEN_ANNOTATION {
-		_, err := p.parseAnnotation()
+    ann, err := p.parseAnnotation()
 		if err != nil {
 			p.eatUntil(TOKEN_COMMA, TOKEN_PAREN_END)
 			p.eat(p.lookahead)
 		}
+
+    annotation = ann
 	}
 
 	if p.lookahead == TOKEN_REQUIRED {
