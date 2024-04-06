@@ -189,8 +189,6 @@ Also, the code generator only cares about the information within the data class 
 
 The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues/new) with the code that caused the error.
 
-
-
 ## Downsides of `genq`
 
 - `build_runner` is extensible & pluggable and can be used for a wide variety of tasks, whereas `genq` is focused on data class generation. Freezed for example leverages this to generate JSON Serialization code using `json_serializable`.
