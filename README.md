@@ -102,7 +102,6 @@ The generated class will have the following methods:
 ## JSON Serialization/Deserialization
 
 To generate JSON serialization/deserialization code, you need to use the `@Genq(json: true)` annotation instead of `@genq`. 
-This will generate the toJson & fromJson methods for the data class. 
 
 ```dart
 import 'package:genq/genq.dart';
