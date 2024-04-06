@@ -20,7 +20,7 @@ Inspired by **freezed**, genq offers a familiar syntax for defining data classes
 :-------------------------:|:-------------------------:
 ![build_runner](./docs/freezed.png) | ![genq](./docs/genq.png)
 
-In this benchmark (located in `./benchmarks`), _count_ is the number of files in the benchmark, containing 250 annotated classes each. So for example, _count=1_ means 250 classes, _count=2_ means 500 classes, and so on. For count 10, `build_runner` and `freezed` took around 46 seconds, while `genq` took 0.11 seconds. **This is a >400x speedup!**
+In this benchmark (located in `./benchmarks`), _count_ is the number of files in the benchmark, containing 250 annotated classes each. So for example, _count=1_ means 250 classes, _count=2_ means 500 classes, and so on. For count 10, `build_runner` and `freezed` took around 14.9 seconds, while `genq` took 0.11 seconds. **This is a >100x speedup!**
 
 #### Notes
 
