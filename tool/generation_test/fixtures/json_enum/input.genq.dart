@@ -119,7 +119,7 @@ UserStatus $UserStatusFromJson(Object json) {
     case 1:
       return UserStatus.blocked;
     default:
-      throw Exception("Unknown UserStatus value: $json");
+      throw UnsupportedError('The value $json is not a valid value for enum UserStatus');
   }
 }
 
@@ -134,6 +134,6 @@ Object $UserStatusToJson(UserStatus value) {
     case UserStatus.blocked:
       return 1;
     default:
-      throw Exception("Unknown UserStatus value: $value");
+      throw UnsupportedError('Could not map $value to a JSON value');
   }
 }
