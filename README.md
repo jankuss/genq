@@ -122,7 +122,7 @@ This will generate two public functions, which you can use to serialize/deserial
 
 ```dart
 $UserFromJson(Map<String, dynamic> json) => /* ... */;
-$UserToJson(Map<String, dynamic> json) => /* ... */;
+$UserToJson(User value) => /* ... */;
 ```
 
 ### Customize JSON Serialization
@@ -149,7 +149,7 @@ class User with _$User {
 
 ### Enums
 
-Enums are also supported for JSON serialization/deserialization. 
+Enums are also supported for JSON serialization/deserialization. They need to be annotated with `@JsonEnum`.
 
 ```dart
 import 'package:genq/genq.dart';
@@ -166,6 +166,18 @@ enum Role {
   user,
 }
 ```
+
+Similary to the @Genq(json: true) annotation, this will generate two public functions, which you can use to serialize/deserialize the enum to/from JSON:
+
+```dart
+$RoleFromJson(Object json) => /* ... */;
+$RoleToJson(Role value) => /* ... */;
+```
+
+### Notes
+
+The fundamental idea behind the JSON codegen for it to be fast and efficient is to **publicly** expose the generated functions. Based on this, genq can assume for a type
+`T` that the functions `$TFromJson` and `$TToJson` are available, thus avoiding unnecessary traversal of other files.
 
 ## How?
 
