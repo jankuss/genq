@@ -9,13 +9,13 @@ type GenqClass struct {
 }
 
 type GenqJsonEnum struct {
-  Name string
-  EnumValues []GenqJsonEnumValue
+	Name       string
+	EnumValues []GenqJsonEnumValue
 }
 
 type GenqJsonEnumValue struct {
-  Annotation GenqAnnotation
-  Name string
+	Annotation GenqAnnotation
+	Name       string
 }
 
 type GenqTypeReference struct {
@@ -29,8 +29,8 @@ type GenqTypeReference struct {
 }
 
 type GenqAnnotation struct {
-	Name   string
-  Params []GenqValue
+	Name        string
+	Params      []GenqValue
 	NamedParams []GenqAnnotationParameter
 }
 
@@ -40,10 +40,10 @@ type GenqAnnotationParameter struct {
 }
 
 type GenqValue struct {
-  RawValue     string
+	RawValue     string
 	BooleanValue bool
 	StringValue  string
-  IntValue     int
+	IntValue     int
 }
 
 type GenqFromJsonConstructor struct {
