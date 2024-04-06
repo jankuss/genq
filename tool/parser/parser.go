@@ -2,7 +2,10 @@
 
 package parser
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Parser struct {
 	lexer          *Lexer
@@ -57,28 +60,22 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 			continue
 		}
 
-		// If the annotation is not a "genq" annotation
-		if n.Name != "genq" {
-			continue
+		if n.Name == "genq" {
+			err := genqAnnotationParser(p, listener)
+			if err != nil {
+				errors = append(errors, err)
+				continue
+			}
 		}
 
-		// As of now, we are only interested in classes annotated with "genq" and.
-		// Skip if the next token is not "class"
-		if p.lookahead != TOKEN_CLASS {
-			continue
+		if n.Name == "JsonEnum" {
+			err := genqJsonEnumAnnotationParser(n, p, listener)
+			if err != nil {
+				errors = append(errors, err)
+				continue
+			}
 		}
 
-		// Finally, we found a class annotated with "genq". Lets parse it.
-		genqClass, err := p.parseGenqClass()
-		if err != nil {
-			// When there was an error parsing the class, we add it to the list of Errors
-			// and continue parsing the rest of the file.
-			errors = append(errors, err)
-			continue
-		}
-
-		// When the class is successfully parsed, we call the listener with the parsed class.
-		listener.OnGenqClass(genqClass)
 	}
 
 	return ParseResult{
@@ -90,6 +87,7 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 // When a node is parsed, the parser will call the appropriate method on the listener.
 type ParserListener interface {
 	OnGenqClass(genqClass GenqClass)
+	OnGenqJsonEnum(genqJsonEnum GenqJsonEnum)
 }
 
 // NewParser creates a new parser with the given string as input.
@@ -124,6 +122,10 @@ func (p *Parser) restore() {
 	p.lexer.cursor = restorationPoint.cursor
 }
 
+func (p *Parser) dontRestore() {
+	p.restorationPoints = p.restorationPoints[:len(p.restorationPoints)-1]
+}
+
 type restorationPoint struct {
 	lookahead      TokenType
 	lookaheadValue string
@@ -137,6 +139,7 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 		return GenqAnnotation{}, err
 	}
 
+	positional := []GenqValue{}
 	params := []GenqAnnotationParameter{}
 
 	if p.lookahead == TOKEN_PAREN_START {
@@ -144,6 +147,15 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 		p.eat(TOKEN_PAREN_START)
 
 		for p.lookahead != TOKEN_PAREN_END {
+			p.markRestorationPoint()
+			v, err := p.parseValue()
+			if err == nil {
+				p.dontRestore()
+				positional = append(positional, v)
+				continue
+			}
+			p.restore()
+
 			name, err := p.eat(TOKEN_IDENTIFIER)
 			if err != nil {
 				return GenqAnnotation{}, err
@@ -175,12 +187,33 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 	}
 
 	return GenqAnnotation{
-		Name:   annotationName,
-		Params: params,
+		Name:        annotationName,
+		NamedParams: params,
+		Params:      positional,
 	}, nil
 }
 
 func (p *Parser) parseValue() (GenqValue, *ParsingError) {
+	if p.lookahead == TOKEN_NUMBER {
+		v, err := p.eat(TOKEN_NUMBER)
+		if err != nil {
+			return GenqValue{}, err
+		}
+
+		intVal, e := strconv.Atoi(v)
+		if e != nil {
+			return GenqValue{}, &ParsingError{
+				Err: fmt.Errorf("Could not parse number: %s", v),
+				Pos: p.lexer.cursor - len(v),
+			}
+		}
+
+		return GenqValue{
+			RawValue: v,
+			IntValue: intVal,
+		}, nil
+	}
+
 	if p.lookahead == TOKEN_SINGLE_STRING || p.lookahead == TOKEN_DOUBLE_STRING {
 		v, err := p.eat(p.lookahead)
 		if err != nil {
@@ -188,6 +221,7 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 		}
 
 		return GenqValue{
+			RawValue:    v,
 			StringValue: v[1 : len(v)-1],
 		}, nil
 	}
@@ -199,11 +233,15 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 		}
 
 		return GenqValue{
+			RawValue:     v,
 			BooleanValue: v == "true",
 		}, nil
 	}
 
-	return GenqValue{}, nil
+	return GenqValue{}, &ParsingError{
+		Err: fmt.Errorf("Unexpected token: %s (`%s`). Expected a value.", p.lookahead, p.lookaheadValue),
+		Pos: p.lexer.cursor - len(p.lookaheadValue),
+	}
 }
 
 type FunctionType struct {
@@ -607,13 +645,13 @@ func (p *Parser) parseNamedParam() (GenqNamedParam, *ParsingError) {
 	annotation := GenqAnnotation{}
 
 	if p.lookahead == TOKEN_ANNOTATION {
-    ann, err := p.parseAnnotation()
+		ann, err := p.parseAnnotation()
 		if err != nil {
 			p.eatUntil(TOKEN_COMMA, TOKEN_PAREN_END)
 			p.eat(p.lookahead)
 		}
 
-    annotation = ann
+		annotation = ann
 	}
 
 	if p.lookahead == TOKEN_REQUIRED {

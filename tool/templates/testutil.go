@@ -33,3 +33,6 @@ type testParserListener struct {
 func (l *testParserListener) OnGenqClass(genqClass parser.GenqClass) {
 	l.genqClass = genqClass
 }
+
+func (l *testParserListener) OnGenqJsonEnum(genqClass parser.GenqJsonEnum) {
+}

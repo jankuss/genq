@@ -44,8 +44,49 @@ func typeFromJson(typeRef GenqTypeReference, valueName string) string {
 		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(typeRef.GenericTypes[0], "e") + ").toSet()"
 	}
 
-	// By default, we assume it's a class with a static member/factory method called fromJson
-	return typeRef.Name + ".fromJson(" + valueName + ")"
+  // For every other type, we call the generated ${Type}FromJson method.
+	return "$" + typeRef.Name + "FromJson(" + valueName + ")"
+}
+
+func typeToJsonNullable(typeRef GenqTypeReference, valueName string) string {
+  if typeRef.Optional {
+    return valueName + " == null ? null : " + typeToJson(typeRef, valueName + "!")
+  } else {
+    return typeToJson(typeRef, valueName)
+  }
+}
+
+func typeToJson(typeRef GenqTypeReference, valueName string) string {
+  if typeRef.Name == "String" {
+    return valueName
+  }
+
+  if typeRef.Name == "int" {
+    return valueName
+  }
+
+  if typeRef.Name == "double" {
+    return valueName
+  }
+
+  if typeRef.Name == "bool" {
+    return valueName
+  }
+
+  if typeRef.Name == "num" {
+    return valueName
+  }
+
+  if typeRef.Name == "List" {
+    return valueName + ".map((e) => " + typeToJson(typeRef.GenericTypes[0], "e") + ").toList()"
+  }
+
+  if typeRef.Name == "Set" {
+    return valueName + ".map((e) => " + typeToJson(typeRef.GenericTypes[0], "e") + ").toSet()"
+  }
+
+  // For every other type, we call the generated ${Type}ToJson method.
+  return "$" + typeRef.Name + "ToJson(" + valueName + ")"
 }
 
 func templateFromJson(str []string, params GenqClass) []string {
@@ -54,7 +95,7 @@ func templateFromJson(str []string, params GenqClass) []string {
 	for _, param := range params.Constructor.Params {
 		jsonKey := param.Name
 		if param.Annotation.Name == "JsonKey" {
-			for _, annotationParam := range param.Annotation.Params {
+			for _, annotationParam := range param.Annotation.NamedParams {
 				if annotationParam.Name == "name" {
 					jsonKey = annotationParam.Value.StringValue
 				}
@@ -68,4 +109,25 @@ func templateFromJson(str []string, params GenqClass) []string {
 	str = append(str, fmt.Sprintf("}"))
 
 	return str
+}
+
+func templateToJson(str []string, params GenqClass) []string {
+  str = append(str, fmt.Sprintf("Map<String, dynamic> $%sToJson(%s obj) {", params.Name, params.Name))
+  str = append(str, indent(2, fmt.Sprintf("return {")))
+  for _, param := range params.Constructor.Params {
+    jsonKey := param.Name
+    if param.Annotation.Name == "JsonKey" {
+      for _, annotationParam := range param.Annotation.NamedParams {
+        if annotationParam.Name == "name" {
+          jsonKey = annotationParam.Value.StringValue
+        }
+      }
+    }
+
+    str = append(str, indent(4, fmt.Sprintf("'%s': %s,", jsonKey, typeToJsonNullable(param.ParamType, "obj."+param.Name))))
+  }
+  str = append(str, indent(2, fmt.Sprintf("};")))
+  str = append(str, fmt.Sprintf("}"))
+
+  return str
 }

@@ -8,6 +8,16 @@ type GenqClass struct {
 	HasJsonConstructor    bool
 }
 
+type GenqJsonEnum struct {
+  Name string
+  EnumValues []GenqJsonEnumValue
+}
+
+type GenqJsonEnumValue struct {
+  Annotation GenqAnnotation
+  Name string
+}
+
 type GenqTypeReference struct {
 	Name         string
 	Optional     bool
@@ -20,7 +30,8 @@ type GenqTypeReference struct {
 
 type GenqAnnotation struct {
 	Name   string
-	Params []GenqAnnotationParameter
+  Params []GenqValue
+	NamedParams []GenqAnnotationParameter
 }
 
 type GenqAnnotationParameter struct {
@@ -29,8 +40,10 @@ type GenqAnnotationParameter struct {
 }
 
 type GenqValue struct {
+  RawValue     string
 	BooleanValue bool
 	StringValue  string
+  IntValue     int
 }
 
 type GenqFromJsonConstructor struct {

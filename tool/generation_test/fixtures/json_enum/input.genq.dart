@@ -95,6 +95,45 @@ User $UserFromJson(Map<String, dynamic> json) {
     name: json['full_name'] as String,
     age: json['age'] == null ? null : (json['age'] as int?),
     registered: json['registered'] as bool,
-    status: json['status'] == null ? null : (UserStatus.fromJson(json['status']) as UserStatus?),
+    status: json['status'] == null ? null : ($UserStatusFromJson(json['status']) as UserStatus?),
   );
+}
+
+Map<String, dynamic> $UserToJson(User obj) {
+  return {
+    'full_name': obj.name,
+    'age': obj.age == null ? null : obj.age!,
+    'registered': obj.registered,
+    'status': obj.status == null ? null : $UserStatusToJson(obj.status!),
+  };
+}
+
+UserStatus $UserStatusFromJson(Object json) {
+  switch (json) {
+    case "REGISTERED":
+      return UserStatus.registered;
+    case "UNREGISTERED":
+      return UserStatus.unregistered;
+    case 0:
+      return UserStatus.pending;
+    case 1:
+      return UserStatus.blocked;
+    default:
+      throw Exception("Unknown UserStatus value: $json");
+  }
+}
+
+Object $UserStatusToJson(UserStatus value) {
+  switch (value) {
+    case UserStatus.registered:
+      return "REGISTERED";
+    case UserStatus.unregistered:
+      return "UNREGISTERED";
+    case UserStatus.pending:
+      return 0;
+    case UserStatus.blocked:
+      return 1;
+    default:
+      throw Exception("Unknown UserStatus value: $value");
+  }
 }

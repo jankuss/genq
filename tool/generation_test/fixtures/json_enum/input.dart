@@ -14,10 +14,14 @@ class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);
 }
 
-@genqJsonEnum
+@JsonEnum()
 enum UserStatus {
+  @JsonValue("REGISTERED")
   registered,
+  @JsonValue("UNREGISTERED")
   unregistered,
+  @JsonValue(0)
   pending,
+  @JsonValue(1)
   blocked,
 }

@@ -5,7 +5,6 @@ class Genq {
 }
 
 const genq = Genq();
-const genqJsonEnum = GenqJsonEnum();
 
 class JsonKey {
   final String? name;
@@ -15,6 +14,12 @@ class JsonKey {
   });
 }
 
-class GenqJsonEnum {
-  const GenqJsonEnum();
+class JsonEnum {
+  const JsonEnum();
+}
+
+class JsonValue {
+  final Object value;
+
+  const JsonValue(this.value);
 }

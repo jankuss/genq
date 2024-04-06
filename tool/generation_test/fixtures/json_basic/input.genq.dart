@@ -95,8 +95,17 @@ User $UserFromJson(Map<String, dynamic> json) {
     name: json['full_name'] as String,
     age: json['age'] == null ? null : (json['age'] as int?),
     registered: json['registered'] as bool,
-    address: json['address'] == null ? null : (Address.fromJson(json['address']) as Address?),
+    address: json['address'] == null ? null : ($AddressFromJson(json['address']) as Address?),
   );
+}
+
+Map<String, dynamic> $UserToJson(User obj) {
+  return {
+    'full_name': obj.name,
+    'age': obj.age == null ? null : obj.age!,
+    'registered': obj.registered,
+    'address': obj.address == null ? null : $AddressToJson(obj.address!),
+  };
 }
 
 mixin _$Address {
@@ -196,4 +205,13 @@ Address $AddressFromJson(Map<String, dynamic> json) {
     state: json['state'] as String,
     zip: json['zip'] as String,
   );
+}
+
+Map<String, dynamic> $AddressToJson(Address obj) {
+  return {
+    'street': obj.street,
+    'city': obj.city,
+    'state': obj.state,
+    'zip': obj.zip,
+  };
 }

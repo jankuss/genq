@@ -12,6 +12,8 @@ func Template(str []string, params GenqClass) []string {
   if (params.HasJsonConstructor) {
     str = append(str, "")
     str = templateFromJson(str, params)
+    str = append(str, "")
+    str = templateToJson(str, params)
   }
 
 	return str
