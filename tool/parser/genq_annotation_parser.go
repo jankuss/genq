@@ -1,8 +1,7 @@
 package parser
 
-func genqAnnotationParser(p *Parser, listener ParserListener) *ParsingError {
-	// Finally, we found a class annotated with "genq". Lets parse it.
-	genqClass, err := p.parseGenqClass()
+func genqAnnotationParser(annotation GenqAnnotation, p *Parser, listener ParserListener) *ParsingError {
+	genqClass, err := p.parseGenqClass(annotation)
 	if err != nil {
 		return err
 	}

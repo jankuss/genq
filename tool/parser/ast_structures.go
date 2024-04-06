@@ -4,8 +4,7 @@ type GenqClass struct {
 	Name                  string
 	HasPrivateConstructor bool
 	Constructor           GenqConstructorSignature
-	FromJsonConstructor   GenqFromJsonConstructor
-	HasJsonConstructor    bool
+	Annotation            GenqAnnotation
 }
 
 type GenqJsonEnum struct {

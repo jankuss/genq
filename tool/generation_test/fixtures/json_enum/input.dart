@@ -2,7 +2,7 @@ import 'package:genq/genq.dart';
 
 part 'input.genq.dart';
 
-@genq
+@Genq(json: true)
 class User with _$User {
   factory User({
     @JsonKey(name: 'full_name') required String name,

@@ -99,15 +99,86 @@ The generated class will have the following methods:
 - `toString`: Generate a human-readable string representation of the data class.
 - `==`: Compare two data classes for equality.
 
+## JSON Serialization/Deserialization
+
+To generate JSON serialization/deserialization code, you need to use the `@Genq(json: true)` annotation instead of `@genq`. 
+This will generate the toJson & fromJson methods for the data class. 
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    @JsonKey(name: 'full_name')
+    required String name,
+    required int age,
+  }) = _User;
+}
+```
+
+This will generate two public functions, which you can use to serialize/deserialize the data class to/from JSON:
+
+```dart
+$UserFromJson(Map<String, dynamic> json) => /* ... */;
+$UserToJson(Map<String, dynamic> json) => /* ... */;
+```
+
+### Customize JSON Serialization
+
+You can customize the generated JSON serialization/deserialization code for fields using the `@JsonKey` annotation. 
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    // Customizing the JSON key for the field 'name'. When deserializing, the value of 'full_name' will be assigned to the 'name' field.
+    @JsonKey(name: 'full_name')
+    required String name,
+    // Excluding the field 'age' from JSON serialization/deserialization.
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    required int age,
+  }) = _User;
+}
+```
+
+### Enums
+
+Enums are also supported for JSON serialization/deserialization. 
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@JsonEnum()
+enum Role {
+  // You can annotate the enum values with @JsonValue to customize the JSON serialization/deserialization.
+  // For example, the string 'ADMIN' will get deserialized to the Role.admin value and vice versa.
+  @JsonValue('ADMIN')
+  admin,
+  @JsonValue('USER')
+  user,
+}
+```
+
 ## How?
 
 genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than `build_runner`, which uses the `analyzer` package. Code generation is also done in parallel for each file, which further speeds up the process.
 
 Also, the code generator only cares about the information within the data class definition, which allows it to ignore the rest of the codebase.
 
-## Notes on the subset parser
+### Notes on the subset parser
 
 The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues/new) with the code that caused the error.
+
+
 
 ## Downsides of `genq`
 

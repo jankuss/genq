@@ -2,7 +2,7 @@ import 'package:genq/genq.dart';
 
 part 'input.genq.dart';
 
-@genq
+@Genq(json: true)
 class User with _$User {
   factory User({
     @JsonKey(name: 'full_name') required String name,
@@ -11,10 +11,10 @@ class User with _$User {
     required Address? address,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);
 }
 
-@genq
+@Genq(json: true)
 class Address with _$Address {
   factory Address({
     required String street,
@@ -23,5 +23,5 @@ class Address with _$Address {
     required String zip,
   }) = _Address;
 
-  factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
+  factory Address.fromJson(Map<String, dynamic> json) => $AddressFromJson(json);
 }

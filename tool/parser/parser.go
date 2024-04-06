@@ -60,8 +60,8 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 			continue
 		}
 
-		if n.Name == "genq" {
-			err := genqAnnotationParser(p, listener)
+		if n.Name == "genq" || n.Name == "Genq" {
+			err := genqAnnotationParser(n, p, listener)
 			if err != nil {
 				errors = append(errors, err)
 				continue
@@ -133,7 +133,11 @@ type restorationPoint struct {
 }
 
 func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
-	p.eat(TOKEN_ANNOTATION)
+	_, err := p.eat(TOKEN_ANNOTATION)
+	if err != nil {
+		return GenqAnnotation{}, err
+	}
+
 	annotationName, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
 		return GenqAnnotation{}, err
@@ -183,7 +187,11 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 				Value: value,
 			})
 		}
-		p.eat(TOKEN_PAREN_END)
+
+		_, err := p.eat(TOKEN_PAREN_END)
+		if err != nil {
+			return GenqAnnotation{}, err
+		}
 	}
 
 	return GenqAnnotation{
@@ -408,7 +416,10 @@ func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
 		}
 	}
 
-	p.eat(TOKEN_PAREN_END)
+	_, err := p.eat(TOKEN_PAREN_END)
+	if err != nil {
+		return GenqParamList{}, err
+	}
 
 	return GenqParamList{
 		PositionalParams: positionalParams,
@@ -416,7 +427,7 @@ func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
 	}, nil
 }
 
-func (p *Parser) parseGenqClass() (GenqClass, *ParsingError) {
+func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingError) {
 	_, err := p.eat(TOKEN_CLASS)
 	if err != nil {
 		return GenqClass{}, err
@@ -438,8 +449,6 @@ func (p *Parser) parseGenqClass() (GenqClass, *ParsingError) {
 	}
 
 	var genqConstructorSignature GenqConstructorSignature
-	var jsonConstructorSignature GenqFromJsonConstructor
-	var hasJsonConstructor bool
 	hasPrivateConstructor := false
 
 	for {
@@ -523,56 +532,6 @@ func (p *Parser) parseGenqClass() (GenqClass, *ParsingError) {
 				if err != nil {
 					return GenqClass{}, err
 				}
-			} else if p.lookahead == TOKEN_DOT {
-				_, err := p.eat(TOKEN_DOT)
-				if err != nil {
-					return GenqClass{}, err
-				}
-
-				constructorName, err := p.eat(TOKEN_IDENTIFIER)
-				if err != nil {
-					return GenqClass{}, nil
-				}
-
-				if constructorName == "fromJson" {
-					if p.lookahead == TOKEN_PAREN_START {
-						_, err := p.eat(TOKEN_PAREN_START)
-						if err != nil {
-							return GenqClass{}, err
-						}
-
-						paramType, err := p.parseTypeReference()
-						if err != nil {
-							return GenqClass{}, err
-						}
-
-						identifier, err := p.eat(TOKEN_IDENTIFIER)
-						if err != nil {
-							return GenqClass{}, err
-						}
-
-						_, err = p.eat(TOKEN_PAREN_END)
-						if err != nil {
-							return GenqClass{}, err
-						}
-
-						jsonConstructorSignature = GenqFromJsonConstructor{
-							ParamType:  paramType,
-							Identifier: identifier,
-						}
-						hasJsonConstructor = true
-					}
-				}
-
-				err = p.eatUntil(TOKEN_SEMICOLON)
-				if err != nil {
-					return GenqClass{}, err
-				}
-
-				_, err = p.eat(TOKEN_SEMICOLON)
-				if err != nil {
-					return GenqClass{}, err
-				}
 			}
 		} else {
 			_, err := p.eat(p.lookahead)
@@ -585,9 +544,8 @@ func (p *Parser) parseGenqClass() (GenqClass, *ParsingError) {
 	return GenqClass{
 		Name:                  classIdentifier,
 		Constructor:           genqConstructorSignature,
-		FromJsonConstructor:   jsonConstructorSignature,
 		HasPrivateConstructor: hasPrivateConstructor,
-		HasJsonConstructor:    hasJsonConstructor,
+		Annotation:            annotation,
 	}, nil
 }
 

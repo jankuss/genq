@@ -1,7 +1,11 @@
 export 'package:collection/collection.dart' show DeepCollectionEquality;
 
 class Genq {
-  const Genq();
+  final bool json;
+
+  const Genq({
+    this.json = false,
+  });
 }
 
 const genq = Genq();
