@@ -26,7 +26,7 @@ func TemplateJsonEnumFromJson(str []string, params GenqJsonEnum) []string {
 		str = append(str, indent(6, fmt.Sprintf("return %s.%s;", params.Name, value.Name)))
 	}
 	str = append(str, indent(4, fmt.Sprintf("default:")))
-	str = append(str, indent(6, fmt.Sprintf("throw InvalidJsonEnumValueError(json, %s);", params.Name)))
+	str = append(str, indent(6, fmt.Sprintf("throw UnsupportedError('The value $json is not a valid value for enum %s');", params.Name)))
 	str = append(str, indent(2, fmt.Sprintf("}")))
 	str = append(str, fmt.Sprintf("}"))
 	return str

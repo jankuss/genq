@@ -7,7 +7,7 @@ JsonUserStatus $JsonUserStatusFromJson(Object json) {
     case 'INACTIVE':
       return JsonUserStatus.inactive;
     default:
-      throw InvalidJsonEnumValueError(json, JsonUserStatus);
+      throw UnsupportedError('The value $json is not a valid value for enum JsonUserStatus');
   }
 }
 
