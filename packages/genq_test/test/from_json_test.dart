@@ -37,12 +37,34 @@ void main() {
     );
   });
 
-  test('fromJson parses json 2', () {
+  test('fromJson parses when nullable field is absent', () {
     final value = $JsonUserFromJson({
       'full_name': 'Super',
       'age': 10,
       'registered': false,
       'status': 'INACTIVE',
+    });
+
+    expect(
+      value,
+      equals(
+        JsonUser(
+          name: 'Super',
+          age: 10,
+          registered: false,
+          status: JsonUserStatus.inactive,
+        ),
+      ),
+    );
+  });
+
+  test('fromJson parses when nullable field is null', () {
+    final value = $JsonUserFromJson({
+      'full_name': 'Super',
+      'age': 10,
+      'registered': false,
+      'status': 'INACTIVE',
+      'address': null,
     });
 
     expect(

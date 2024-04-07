@@ -210,10 +210,8 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 
 		intVal, e := strconv.Atoi(v)
 		if e != nil {
-			return GenqValue{}, &ParsingError{
-				Err: fmt.Errorf("Could not parse number: %s", v),
-				Pos: p.lexer.cursor - len(v),
-			}
+			err := fmt.Errorf("Could not parse number: %s", v)
+			return GenqValue{}, p.produceError(err)
 		}
 
 		return GenqValue{
@@ -246,14 +244,8 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 		}, nil
 	}
 
-	return GenqValue{}, &ParsingError{
-		Err: fmt.Errorf("Unexpected token: %s (`%s`). Expected a value.", p.lookahead, p.lookaheadValue),
-		Pos: p.lexer.cursor - len(p.lookaheadValue),
-	}
-}
-
-type FunctionType struct {
-	ReturnType GenqTypeReference
+	err := fmt.Errorf("Unexpected token: %s (`%s`). Expected a value.", p.lookahead, p.lookaheadValue)
+	return GenqValue{}, p.produceError(err)
 }
 
 // Due to dart syntax, it is possible for a type reference to be the return type of a function.
@@ -677,14 +669,19 @@ func (p *Parser) eat(token TokenType) (string, *ParsingError) {
 	currentTokenValue := p.lookaheadValue
 
 	if currentToken != token {
-		return "", &ParsingError{
-			Err: fmt.Errorf("Unexpected token: %s (`%s`). Expected %s.", currentToken, currentTokenValue, token),
-			Pos: p.lexer.cursor - len(p.lookaheadValue),
-		}
+		err := fmt.Errorf("Unexpected token: %s (`%s`). Expected %s.", currentToken, currentTokenValue, token)
+		return "", p.produceError(err)
 	}
 
 	p.progress()
 	return currentTokenValue, nil
+}
+
+func (p *Parser) produceError(err error) *ParsingError {
+	return &ParsingError{
+		Err: err,
+		Pos: p.lexer.cursor - len(p.lookaheadValue),
+	}
 }
 
 type ParsingError struct {
