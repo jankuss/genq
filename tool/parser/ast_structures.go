@@ -21,7 +21,6 @@ type GenqTypeReference struct {
 	Name         string
 	Optional     bool
 	GenericTypes []GenqTypeReference
-	FunctionType *FunctionType
 	ReturnType   *GenqTypeReference
 	ParamList    GenqParamList
 	IsFunction   bool
