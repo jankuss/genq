@@ -5,11 +5,11 @@ func (t GenqTypeReference) IsCollectionType() bool {
 }
 
 func ReadAnnotationNamedParameter(annotation GenqAnnotation, name string) *GenqAnnotationParameter {
-  for _, param := range annotation.NamedParams {
-    if param.Name == name {
-      return &param
-    }
-  }
+	for _, param := range annotation.NamedParams {
+		if param.Name == name {
+			return &param
+		}
+	}
 
-  return nil
+	return nil
 }

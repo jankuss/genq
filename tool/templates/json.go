@@ -45,19 +45,19 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueNam
 		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
 	}
 
-  customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
-  if customFromJson != nil && customFromJson.Value.Reference != nil {
-    return customFromJson.Value.Reference.String() + "(" + valueName + ")"
-  }
+	customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
+	if customFromJson != nil && customFromJson.Value.Reference != nil {
+		return customFromJson.Value.Reference.String() + "(" + valueName + ")"
+	}
 
 	// For every other type, we call the generated ${Type}FromJson method.
-  params := []string{}
-  params = append(params, valueName)
+	params := []string{}
+	params = append(params, valueName)
 
-  unknownEnumValue := ReadAnnotationNamedParameter(annotation, "unknownEnumValue")
-  if unknownEnumValue != nil && unknownEnumValue.Value.Reference != nil {
-    params = append(params, unknownEnumValue.Value.Reference.String())
-  }
+	unknownEnumValue := ReadAnnotationNamedParameter(annotation, "unknownEnumValue")
+	if unknownEnumValue != nil && unknownEnumValue.Value.Reference != nil {
+		params = append(params, unknownEnumValue.Value.Reference.String())
+	}
 
 	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")"
 }
@@ -99,10 +99,10 @@ func typeToJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueName 
 		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
 	}
 
-  customFromJson := ReadAnnotationNamedParameter(annotation, "toJson")
-  if customFromJson != nil && customFromJson.Value.Reference != nil {
-    return customFromJson.Value.Reference.String() + "(" + valueName + ")"
-  }
+	customFromJson := ReadAnnotationNamedParameter(annotation, "toJson")
+	if customFromJson != nil && customFromJson.Value.Reference != nil {
+		return customFromJson.Value.Reference.String() + "(" + valueName + ")"
+	}
 
 	// For every other type, we call the generated ${Type}ToJson method.
 	return "$" + typeRef.Name + "ToJson(" + valueName + ")"

@@ -62,13 +62,13 @@ func (t GenqNamedParam) String() string {
 }
 
 func (t *GenqReference) String() string {
-  cur := t
-  str := cur.Name
-  for cur != nil {
-    if cur.Next != nil {
-      str += "." + cur.Next.Name
-    }
-    cur = cur.Next
-  }
-  return str
+	cur := t
+	str := cur.Name
+	for cur != nil {
+		if cur.Next != nil {
+			str += "." + cur.Next.Name
+		}
+		cur = cur.Next
+	}
+	return str
 }

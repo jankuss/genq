@@ -42,12 +42,12 @@ type GenqValue struct {
 	BooleanValue bool
 	StringValue  string
 	IntValue     int
-  Reference    *GenqReference
+	Reference    *GenqReference
 }
 
 type GenqReference struct {
-  Name string
-  Next *GenqReference
+	Name string
+	Next *GenqReference
 }
 
 type GenqFromJsonConstructor struct {
