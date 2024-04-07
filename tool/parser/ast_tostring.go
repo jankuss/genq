@@ -60,3 +60,15 @@ func (t GenqNamedParam) String() string {
 	str += " " + t.Name
 	return str
 }
+
+func (t *GenqReference) String() string {
+  cur := t
+  str := cur.Name
+  for cur != nil {
+    if cur.Next != nil {
+      str += "." + cur.Next.Name
+    }
+    cur = cur.Next
+  }
+  return str
+}

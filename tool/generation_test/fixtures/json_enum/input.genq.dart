@@ -108,7 +108,7 @@ Map<String, dynamic> $UserToJson(User obj) {
   };
 }
 
-UserStatus $UserStatusFromJson(Object json) {
+UserStatus $UserStatusFromJson(Object json, [UserStatus? unknownEnumValue]) {
   switch (json) {
     case "REGISTERED":
       return UserStatus.registered;
@@ -119,7 +119,11 @@ UserStatus $UserStatusFromJson(Object json) {
     case 1:
       return UserStatus.blocked;
     default:
-      throw UnsupportedError('The value $json is not a valid value for enum UserStatus');
+      if (unknownEnumValue != null) {
+        return unknownEnumValue;
+      } else {
+        throw UnsupportedError('The value $json is not a valid value for enum UserStatus');
+      }
   }
 }
 

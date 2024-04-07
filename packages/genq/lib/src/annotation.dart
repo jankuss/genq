@@ -24,9 +24,15 @@ class GenqJsonEnum {
 
 class JsonKey {
   final String? name;
+  final Function? fromJson;
+  final Function? toJson;
+  final Enum? unknownEnumValue;
 
   const JsonKey({
     this.name,
+    this.unknownEnumValue,
+    this.fromJson,
+    this.toJson,
   });
 }
 

@@ -151,29 +151,22 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 		p.eat(TOKEN_PAREN_START)
 
 		for p.lookahead != TOKEN_PAREN_END {
-			p.markRestorationPoint()
-			v, err := p.parseValue()
-			if err == nil {
-				p.dontRestore()
-				positional = append(positional, v)
-				continue
-			}
-			p.restore()
+      p.markRestorationPoint();
+      v, err := p.parseNamedAssignment()
+      if err == nil {
+        p.dontRestore();
 
-			name, err := p.eat(TOKEN_IDENTIFIER)
-			if err != nil {
-				return GenqAnnotation{}, err
-			}
+        params = append(params, *v)
+      } else {
+        p.restore();
 
-			_, err = p.eat(TOKEN_COLON)
-			if err != nil {
-				return GenqAnnotation{}, err
-			}
+        v, err := p.parseValue()
+        if err != nil {
+          return GenqAnnotation{}, err
+        }
 
-			value, err := p.parseValue()
-			if err != nil {
-				return GenqAnnotation{}, err
-			}
+        positional = append(positional, v)
+      }
 
 			if p.lookahead == TOKEN_COMMA {
 				_, err := p.eat(TOKEN_COMMA)
@@ -181,11 +174,6 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 					return GenqAnnotation{}, err
 				}
 			}
-
-			params = append(params, GenqAnnotationParameter{
-				Name:  name,
-				Value: value,
-			})
 		}
 
 		_, err := p.eat(TOKEN_PAREN_END)
@@ -201,7 +189,44 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 	}, nil
 }
 
+func (p *Parser) parseNamedAssignment() (*GenqAnnotationParameter, *ParsingError) {
+  name, err := p.eat(TOKEN_IDENTIFIER)
+  if err != nil {
+    return nil, err
+  }
+
+  _, err = p.eat(TOKEN_COLON)
+  if err != nil {
+    return nil, err
+  }
+
+  value, err := p.parseValue()
+  if err != nil {
+    return nil, err
+  }
+
+  return &GenqAnnotationParameter{
+    Name: name,
+    Value: value,
+  }, nil
+}
+
 func (p *Parser) parseValue() (GenqValue, *ParsingError) {
+  if p.lookahead == TOKEN_IDENTIFIER {
+    v, err := p.parseGenqReference()
+    if err != nil {
+      return GenqValue{}, err
+    }
+
+    return GenqValue{
+      Reference: v,
+    }, nil
+  }
+
+  return p.parsePrimitive()
+}
+
+func (p *Parser) parsePrimitive() (GenqValue, *ParsingError) {
 	if p.lookahead == TOKEN_NUMBER {
 		v, err := p.eat(TOKEN_NUMBER)
 		if err != nil {
@@ -246,6 +271,38 @@ func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 
 	err := fmt.Errorf("Unexpected token: %s (`%s`). Expected a value.", p.lookahead, p.lookaheadValue)
 	return GenqValue{}, p.produceError(err)
+}
+
+func (p *Parser) parseGenqReference() (*GenqReference, *ParsingError) {
+	v, err := p.eat(TOKEN_IDENTIFIER)
+	if err != nil {
+		return &GenqReference{}, err
+	}
+
+  top := &GenqReference{
+    Name: v,
+  }
+  cur := top
+
+	for p.lookahead == TOKEN_DOT {
+		_, err := p.eat(TOKEN_DOT)
+		if err != nil {
+			return &GenqReference{}, err
+		}
+
+    v, err := p.eat(TOKEN_IDENTIFIER)
+    if err != nil {
+      return &GenqReference{}, err
+    }
+
+    cur.Next = &GenqReference{
+      Name: v,
+    }
+
+    cur = cur.Next
+	}
+
+  return top, nil;
 }
 
 // Due to dart syntax, it is possible for a type reference to be the return type of a function.

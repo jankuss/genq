@@ -64,3 +64,11 @@ func TestJsonBasic(t *testing.T) {
 func TestJsonEnum(t *testing.T) {
 	testGenOutput(t, "json_enum")
 }
+
+func TestJsonEnumUnknown(t *testing.T) {
+	testGenOutput(t, "json_enum_unknown")
+}
+
+func TestJsonEnumCustom(t *testing.T) {
+	testGenOutput(t, "json_enum_custom")
+}

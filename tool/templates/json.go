@@ -3,10 +3,11 @@ package templates
 import (
 	"fmt"
 	. "genq/parser"
+	"strings"
 )
 
-func typeFromJsonNullable(typeRef GenqTypeReference, valueName string) string {
-	str := typeFromJson(typeRef, valueName)
+func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
+	str := typeFromJson(annotation, typeRef, valueName)
 
 	if typeRef.Optional {
 		return valueName + " == null ? null : (" + str + " as " + typeRef.String() + ")"
@@ -15,7 +16,7 @@ func typeFromJsonNullable(typeRef GenqTypeReference, valueName string) string {
 	}
 }
 
-func typeFromJson(typeRef GenqTypeReference, valueName string) string {
+func typeFromJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
 	if typeRef.Name == "String" {
 		return valueName
 	}
@@ -37,26 +38,39 @@ func typeFromJson(typeRef GenqTypeReference, valueName string) string {
 	}
 
 	if typeRef.Name == "List" {
-		return "List.of(" + valueName + ").map((e) => " + typeFromJsonNullable(typeRef.GenericTypes[0], "e") + ").toList()"
+		return "List.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()"
 	}
 
 	if typeRef.Name == "Set" {
-		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(typeRef.GenericTypes[0], "e") + ").toSet()"
+		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
 	}
+
+  customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
+  if customFromJson != nil && customFromJson.Value.Reference != nil {
+    return customFromJson.Value.Reference.String() + "(" + valueName + ")"
+  }
 
 	// For every other type, we call the generated ${Type}FromJson method.
-	return "$" + typeRef.Name + "FromJson(" + valueName + ")"
+  params := []string{}
+  params = append(params, valueName)
+
+  unknownEnumValue := ReadAnnotationNamedParameter(annotation, "unknownEnumValue")
+  if unknownEnumValue != nil && unknownEnumValue.Value.Reference != nil {
+    params = append(params, unknownEnumValue.Value.Reference.String())
+  }
+
+	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")"
 }
 
-func typeToJsonNullable(typeRef GenqTypeReference, valueName string) string {
+func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
 	if typeRef.Optional {
-		return valueName + " == null ? null : " + typeToJson(typeRef, valueName+"!")
+		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName+"!")
 	} else {
-		return typeToJson(typeRef, valueName)
+		return typeToJson(annotation, typeRef, valueName)
 	}
 }
 
-func typeToJson(typeRef GenqTypeReference, valueName string) string {
+func typeToJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
 	if typeRef.Name == "String" {
 		return valueName
 	}
@@ -78,12 +92,17 @@ func typeToJson(typeRef GenqTypeReference, valueName string) string {
 	}
 
 	if typeRef.Name == "List" {
-		return valueName + ".map((e) => " + typeToJson(typeRef.GenericTypes[0], "e") + ").toList()"
+		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()"
 	}
 
 	if typeRef.Name == "Set" {
-		return valueName + ".map((e) => " + typeToJson(typeRef.GenericTypes[0], "e") + ").toSet()"
+		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
 	}
+
+  customFromJson := ReadAnnotationNamedParameter(annotation, "toJson")
+  if customFromJson != nil && customFromJson.Value.Reference != nil {
+    return customFromJson.Value.Reference.String() + "(" + valueName + ")"
+  }
 
 	// For every other type, we call the generated ${Type}ToJson method.
 	return "$" + typeRef.Name + "ToJson(" + valueName + ")"
@@ -102,7 +121,7 @@ func templateFromJson(str []string, params GenqClass) []string {
 			}
 		}
 
-		convName := typeFromJsonNullable(param.ParamType, "json['"+jsonKey+"']")
+		convName := typeFromJsonNullable(param.Annotation, param.ParamType, "json['"+jsonKey+"']")
 		str = append(str, indent(4, fmt.Sprintf("%s: %s,", param.Name, convName)))
 	}
 	str = append(str, indent(2, fmt.Sprintf(");")))
@@ -124,7 +143,7 @@ func templateToJson(str []string, params GenqClass) []string {
 			}
 		}
 
-		str = append(str, indent(4, fmt.Sprintf("'%s': %s,", jsonKey, typeToJsonNullable(param.ParamType, "obj."+param.Name))))
+		str = append(str, indent(4, fmt.Sprintf("'%s': %s,", jsonKey, typeToJsonNullable(param.Annotation, param.ParamType, "obj."+param.Name))))
 	}
 	str = append(str, indent(2, fmt.Sprintf("};")))
 	str = append(str, fmt.Sprintf("}"))
