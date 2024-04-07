@@ -4,7 +4,7 @@ import 'package:genq_test/json/json_user_status.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('fromJson parses json 1', () {
+  test('fromJson parses json', () {
     final value = $JsonUserFromJson({
       'full_name': 'Test',
       'age': 42,

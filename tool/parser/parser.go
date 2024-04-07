@@ -68,7 +68,7 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 			}
 		}
 
-		if n.Name == "JsonEnum" {
+		if n.Name == "GenqJsonEnum" {
 			err := genqJsonEnumAnnotationParser(n, p, listener)
 			if err != nil {
 				errors = append(errors, err)

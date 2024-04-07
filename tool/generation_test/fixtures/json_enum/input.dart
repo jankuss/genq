@@ -14,7 +14,7 @@ class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);
 }
 
-@JsonEnum()
+@GenqJsonEnum()
 enum UserStatus {
   @JsonValue("REGISTERED")
   registered,
