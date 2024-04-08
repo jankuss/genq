@@ -9,9 +9,23 @@ import (
 func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
 	str := typeFromJson(annotation, typeRef, valueName)
 
+	defaultValueAnnotation := ReadAnnotationNamedParameter(annotation, "defaultValue")
+	defaultValue := "null"
+	if defaultValueAnnotation != nil {
+		if defaultValueAnnotation.Value.RawValue != "" {
+			defaultValue = defaultValueAnnotation.Value.RawValue
+		} else {
+			defaultValue = defaultValueAnnotation.Value.Reference.String()
+		}
+	}
+
 	if typeRef.Optional {
-		return valueName + " == null ? null : (" + str + " as " + typeRef.String() + ")"
+		return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
 	} else {
+    if defaultValueAnnotation != nil {
+		return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
+    }
+
 		return str + " as " + typeRef.String()
 	}
 }
