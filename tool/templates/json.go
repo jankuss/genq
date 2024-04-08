@@ -22,9 +22,9 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, 
 	if typeRef.Optional {
 		return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
 	} else {
-    if defaultValueAnnotation != nil {
-		return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
-    }
+		if defaultValueAnnotation != nil {
+			return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
+		}
 
 		return str + " as " + typeRef.String()
 	}
