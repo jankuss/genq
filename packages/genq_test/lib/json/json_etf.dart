@@ -9,6 +9,13 @@ class ISIN {
 
   static ISIN fromJson(String value) => ISIN(value);
   static String toJson(ISIN isin) => isin.value;
+
+  @override
+  operator ==(Object other) => other is ISIN && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
 }
 
 @Genq(json: true)
