@@ -73,14 +73,14 @@ class _$AccountCopyWithImpl implements $AccountCopyWith {
 Account $AccountFromJson(Map<String, dynamic> json) {
   return Account(
     email: json['email'] as String,
-    accountType: _fromJson(json['accountType']) as Deez,
+    accountType: Deez._fromJson(json['accountType']) as Deez,
   );
 }
 
 Map<String, dynamic> $AccountToJson(Account obj) {
   return {
     'email': obj.email,
-    'accountType': _toJson(obj.accountType),
+    'accountType': Deez._toJson(obj.accountType),
   };
 }
 

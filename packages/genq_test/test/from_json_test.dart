@@ -1,3 +1,4 @@
+import 'package:genq_test/json/json_account.dart';
 import 'package:genq_test/json/json_address.dart';
 import 'package:genq_test/json/json_user.dart';
 import 'package:genq_test/json/json_user_status.dart';
@@ -100,5 +101,39 @@ void main() {
         'status': 'iNaCtIvE',
       });
     }, throwsA(anything));
+  });
+
+  test('handles unknown enum value correctly', () {
+    final value = $JsonAccountFromJson({
+      'email': 'jan@kuss.dev',
+      'status': 'SOME UNKNOWN VALUE',
+    });
+
+    expect(
+      value,
+      equals(
+        JsonAccount(
+          email: 'jan@kuss.dev',
+          status: JsonStatus.unknown,
+        ),
+      ),
+    );
+  });
+
+  test('handles unknown enum value correctly (other type)', () {
+    final value = $JsonAccountFromJson({
+      'email': 'jan@kuss.dev',
+      'status': 123,
+    });
+
+    expect(
+      value,
+      equals(
+        JsonAccount(
+          email: 'jan@kuss.dev',
+          status: JsonStatus.unknown,
+        ),
+      ),
+    );
   });
 }
