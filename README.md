@@ -147,6 +147,65 @@ class User with _$User {
 }
 ```
 
+#### Custom fromJson and toJson functions
+
+You can also provide custom `fromJson` and `toJson` functions for a field using the `fromJson` and `toJson` parameters of the `@JsonKey` annotation.
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+class UserName {
+  final String value;
+
+  UserName(this.value);
+
+  static UserName fromJson(String value) {
+    return Custom(value);
+  }
+
+  static UserName toJson(Custom value) {
+    return value.value;
+  }
+}
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    @JsonKey(
+      fromJson: _customFromJson,
+      toJson: _customToJson,
+    )
+    required UserName name,
+    required int age,
+  }) = _User;
+}
+```
+
+#### Unknowns enum values
+
+You can provide a custom function to handle unknown enum values during deserialization using the `unknownEnumValue` parameter of the `@JsonKey` annotation.
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@GenqJsonEnum()
+enum Role {
+  admin,
+  user,
+}
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    required Role role,
+  }) = _User;
+}
+```
+
 ### Enums
 
 Enums are also supported for JSON serialization/deserialization. They need to be annotated with `@JsonEnum`.
@@ -156,7 +215,7 @@ import 'package:genq/genq.dart';
 
 part 'user.genq.dart';
 
-@JsonEnum()
+@GenqJsonEnum()
 enum Role {
   // You can annotate the enum values with @JsonValue to customize the JSON serialization/deserialization.
   // For example, the string 'ADMIN' will get deserialized to the Role.admin value and vice versa.
@@ -165,6 +224,7 @@ enum Role {
   @JsonValue('USER')
   user,
 }
+
 ```
 
 Similary to the @Genq(json: true) annotation, this will generate two public functions, which you can use to serialize/deserialize the enum to/from JSON:
