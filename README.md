@@ -208,7 +208,7 @@ class User with _$User {
 
 ### Enums
 
-Enums are also supported for JSON serialization/deserialization. They need to be annotated with `@JsonEnum`.
+Enums are also supported for JSON serialization/deserialization. They need to be annotated with `@GenqJsonEnum`.
 
 ```dart
 import 'package:genq/genq.dart';
