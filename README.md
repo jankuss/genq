@@ -162,7 +162,7 @@ class UserName {
   UserName(this.value);
 
   static UserName fromJson(String value) {
-    return Custom(value);
+    return UserName(value);
   }
 
   static UserName toJson(Custom value) {
