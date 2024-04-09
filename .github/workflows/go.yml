@@ -64,9 +64,30 @@ jobs:
       run: dart pub get
     - name: run_tests.sh
       run: ./run_tests.sh
+  run-example:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./examples/json
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+    - name: Set up Dart
+      uses: dart-lang/setup-dart@v1
+    - name: pub get
+      run: dart pub get
+    - name: Generate
+      run: ./generate.sh
+    - name: Analyze
+      run: dart analyze
+    - name: Run example
+      run: dart ./bin/json.dart
   goreleaser:
     runs-on: ubuntu-latest
-    needs: [test, test-generated, check-formatting]
+    needs: [test, test-generated, check-formatting, run-example]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
