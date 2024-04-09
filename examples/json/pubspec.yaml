@@ -9,7 +9,6 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  http: ^1.1.0
   genq:
     path: ../../packages/genq
 

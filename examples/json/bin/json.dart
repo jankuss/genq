@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:genq/genq.dart';
-import 'package:http/io_client.dart';
 
 part 'json.genq.dart';
 
@@ -44,10 +44,8 @@ class Geo with _$Geo {
 }
 
 void main(List<String> arguments) async {
-  final http = IOClient();
-
-  final value = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
-  final json = List.of(jsonDecode(value.body)).map((e) => User.fromJson(e)).toList();
+  final value = File('data.json').readAsStringSync();
+  final json = List.of(jsonDecode(value)).map((e) => User.fromJson(e)).toList();
 
   for (final user in json) {
     print(user);
