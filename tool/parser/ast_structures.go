@@ -17,11 +17,11 @@ type GenqJsonEnumValue struct {
 	Name       string
 }
 
-type GenqTypeReference struct {
+type GenqNamedType struct {
 	Name         string
 	Optional     bool
-	GenericTypes []GenqTypeReference
-	ReturnType   *GenqTypeReference
+	GenericTypes []GenqNamedType
+	ReturnType   *GenqNamedType
 	ParamList    GenqParamList
 	IsFunction   bool
 }
@@ -42,17 +42,12 @@ type GenqValue struct {
 	BooleanValue bool
 	StringValue  string
 	IntValue     int
-	Reference    *GenqReference
+	Reference    *GenqIdentifier
 }
 
-type GenqReference struct {
+type GenqIdentifier struct {
 	Name string
-	Next *GenqReference
-}
-
-type GenqFromJsonConstructor struct {
-	ParamType  GenqTypeReference
-	Identifier string
+	Next *GenqIdentifier
 }
 
 type GenqConstructorSignature struct {
@@ -61,7 +56,7 @@ type GenqConstructorSignature struct {
 
 type GenqNamedParam struct {
 	Required   bool
-	ParamType  GenqTypeReference
+	ParamType  GenqNamedType
 	Name       string
 	Annotation GenqAnnotation
 }
@@ -71,7 +66,7 @@ type GenqJsonKeyAnnotation struct {
 }
 
 type GenqPositionalParam struct {
-	ParamType GenqTypeReference
+	ParamType GenqNamedType
 	Name      string
 }
 

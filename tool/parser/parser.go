@@ -213,7 +213,7 @@ func (p *Parser) parseNamedAssignment() (*GenqAnnotationParameter, *ParsingError
 
 func (p *Parser) parseValue() (GenqValue, *ParsingError) {
 	if p.lookahead == TOKEN_IDENTIFIER {
-		v, err := p.parseGenqReference()
+		v, err := p.parseGenqIdentifier()
 		if err != nil {
 			return GenqValue{}, err
 		}
@@ -273,13 +273,13 @@ func (p *Parser) parsePrimitive() (GenqValue, *ParsingError) {
 	return GenqValue{}, p.produceError(err)
 }
 
-func (p *Parser) parseGenqReference() (*GenqReference, *ParsingError) {
+func (p *Parser) parseGenqIdentifier() (*GenqIdentifier, *ParsingError) {
 	v, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
-		return &GenqReference{}, err
+		return &GenqIdentifier{}, err
 	}
 
-	top := &GenqReference{
+	top := &GenqIdentifier{
 		Name: v,
 	}
 	cur := top
@@ -287,15 +287,15 @@ func (p *Parser) parseGenqReference() (*GenqReference, *ParsingError) {
 	for p.lookahead == TOKEN_DOT {
 		_, err := p.eat(TOKEN_DOT)
 		if err != nil {
-			return &GenqReference{}, err
+			return &GenqIdentifier{}, err
 		}
 
 		v, err := p.eat(TOKEN_IDENTIFIER)
 		if err != nil {
-			return &GenqReference{}, err
+			return &GenqIdentifier{}, err
 		}
 
-		cur.Next = &GenqReference{
+		cur.Next = &GenqIdentifier{
 			Name: v,
 		}
 
@@ -329,24 +329,24 @@ func (p *Parser) isReturnTypeOfFunction() bool {
 	return true
 }
 
-func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
+func (p *Parser) parseTypeReference() (GenqNamedType, *ParsingError) {
 	typeIdentifier, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
-		return GenqTypeReference{}, err
+		return GenqNamedType{}, err
 	}
 
-	genericTypes := []GenqTypeReference{}
+	genericTypes := []GenqNamedType{}
 	if p.lookahead == TOKEN_GENERIC_START {
 		_, err := p.eat(TOKEN_GENERIC_START)
 		if err != nil {
-			return GenqTypeReference{}, nil
+			return GenqNamedType{}, nil
 		}
 
 		for {
 			if p.lookahead == TOKEN_GENERIC_END {
 				_, err := p.eat(TOKEN_GENERIC_END)
 				if err != nil {
-					return GenqTypeReference{}, err
+					return GenqNamedType{}, err
 				}
 
 				break
@@ -354,7 +354,7 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 
 			typeRef, err := p.parseTypeReference()
 			if err != nil {
-				return GenqTypeReference{}, err
+				return GenqNamedType{}, err
 			}
 
 			genericTypes = append(genericTypes, typeRef)
@@ -363,7 +363,7 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 				_, err := p.eat(TOKEN_COMMA)
 
 				if err != nil {
-					return GenqTypeReference{}, err
+					return GenqNamedType{}, err
 				}
 			}
 		}
@@ -373,13 +373,13 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 	if p.lookahead == TOKEN_OPTIONAL {
 		_, err := p.eat(TOKEN_OPTIONAL)
 		if err != nil {
-			return GenqTypeReference{}, err
+			return GenqNamedType{}, err
 		}
 
 		optional = true
 	}
 
-	typeRef := GenqTypeReference{
+	typeRef := GenqNamedType{
 		Name:         typeIdentifier,
 		Optional:     optional,
 		GenericTypes: genericTypes,
@@ -391,11 +391,11 @@ func (p *Parser) parseTypeReference() (GenqTypeReference, *ParsingError) {
 		paramList, err := p.parseParamList()
 
 		if err != nil {
-			return GenqTypeReference{}, err
+			return GenqNamedType{}, err
 		}
 
 		prev := typeRef
-		typeRef = GenqTypeReference{
+		typeRef = GenqNamedType{
 			ReturnType: &prev,
 			IsFunction: true,
 			ParamList:  paramList,

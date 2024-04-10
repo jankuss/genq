@@ -1,6 +1,6 @@
 package parser
 
-func (t GenqTypeReference) IsCollectionType() bool {
+func (t GenqNamedType) IsCollectionType() bool {
 	return t.Name == "List" || t.Name == "Set" || t.Name == "Map"
 }
 

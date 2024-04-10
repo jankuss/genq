@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
+func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
 	str := typeFromJson(annotation, typeRef, valueName)
 
 	defaultValueAnnotation := ReadAnnotationNamedParameter(annotation, "defaultValue")
@@ -30,7 +30,7 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, 
 	}
 }
 
-func typeFromJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
+func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
 	if typeRef.Name == "String" {
 		return valueName
 	}
@@ -76,7 +76,7 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueNam
 	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")"
 }
 
-func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
+func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
 	if typeRef.Optional {
 		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName+"!")
 	} else {
@@ -84,7 +84,7 @@ func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqTypeReference, va
 	}
 }
 
-func typeToJson(annotation GenqAnnotation, typeRef GenqTypeReference, valueName string) string {
+func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
 	if typeRef.Name == "String" {
 		return valueName
 	}

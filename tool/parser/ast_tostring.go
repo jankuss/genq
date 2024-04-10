@@ -2,7 +2,7 @@ package parser
 
 import "fmt"
 
-func (t GenqTypeReference) String() string {
+func (t GenqNamedType) String() string {
 	if t.IsFunction {
 		return fmt.Sprintf("%s Function%s", t.ReturnType.String(), t.ParamList.String())
 	}
@@ -61,7 +61,7 @@ func (t GenqNamedParam) String() string {
 	return str
 }
 
-func (t *GenqReference) String() string {
+func (t *GenqIdentifier) String() string {
 	cur := t
 	str := cur.Name
 	for cur != nil {
