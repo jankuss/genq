@@ -2,9 +2,9 @@ package parser
 
 type GenqClass struct {
 	Name                  string
+	Annotation            GenqAnnotation
 	HasPrivateConstructor bool
 	Constructor           GenqConstructorSignature
-	Annotation            GenqAnnotation
 }
 
 type GenqJsonEnum struct {
