@@ -1,7 +1,7 @@
+# genq: Instant Data Class Generation for Dart
+
 [![Go](https://github.com/jankuss/genq/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/jankuss/genq/actions/workflows/go.yml)
 [![pub package](https://img.shields.io/pub/v/genq.svg)](https://pub.dev/packages/genq)
-
-# genq: Instant Data Class Generation for Dart
 
 <img src="docs/logo.png" alt="logo" width="200"/>
 
