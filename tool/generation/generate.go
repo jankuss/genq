@@ -138,7 +138,7 @@ func (l *generatorParserListener) OnGenqJsonEnum(genqJsonEnum GenqJsonEnum) {
 	l.genCount++
 }
 
-func (l *generatorParserListener) OnGenqClass(genqClass GenqClass) {
+func (l *generatorParserListener) OnGenqClass(genqClass GenqClassDeclaration) {
 	if l.genCount > 0 {
 		l.generatorContext.addOutput([]string{""})
 	}

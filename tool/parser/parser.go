@@ -60,7 +60,7 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 			continue
 		}
 
-		if n.Name == "genq" || n.Name == "Genq" {
+		if n.Identifier.Name == "genq" || n.Identifier.Name == "Genq" {
 			err := genqAnnotationParser(n, p, listener)
 			if err != nil {
 				errors = append(errors, err)
@@ -68,7 +68,7 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 			}
 		}
 
-		if n.Name == "GenqJsonEnum" {
+		if n.Identifier.Name == "GenqJsonEnum" {
 			err := genqJsonEnumAnnotationParser(n, p, listener)
 			if err != nil {
 				errors = append(errors, err)
@@ -86,7 +86,7 @@ func (p *Parser) Parse(listener ParserListener) ParseResult {
 // ParserListener is an interface for listening to nodes parsed by the parser.
 // When a node is parsed, the parser will call the appropriate method on the listener.
 type ParserListener interface {
-	OnGenqClass(genqClass GenqClass)
+	OnGenqClass(genqClass GenqClassDeclaration)
 	OnGenqJsonEnum(genqJsonEnum GenqJsonEnum)
 }
 
@@ -132,20 +132,9 @@ type restorationPoint struct {
 	cursor         int
 }
 
-func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
-	_, err := p.eat(TOKEN_ANNOTATION)
-	if err != nil {
-		return GenqAnnotation{}, err
-	}
-
-	annotationName, err := p.eat(TOKEN_IDENTIFIER)
-	if err != nil {
-		return GenqAnnotation{}, err
-	}
-
+func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 	positional := []GenqValue{}
-	params := []GenqAnnotationParameter{}
-
+	params := []GenqNamedExpression{}
 	if p.lookahead == TOKEN_PAREN_START {
 		// Annotation is an invocation
 		p.eat(TOKEN_PAREN_START)
@@ -162,7 +151,7 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 
 				v, err := p.parseValue()
 				if err != nil {
-					return GenqAnnotation{}, err
+					return GenqArgumentList{}, err
 				}
 
 				positional = append(positional, v)
@@ -171,25 +160,47 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 			if p.lookahead == TOKEN_COMMA {
 				_, err := p.eat(TOKEN_COMMA)
 				if err != nil {
-					return GenqAnnotation{}, err
+					return GenqArgumentList{}, err
 				}
 			}
 		}
 
 		_, err := p.eat(TOKEN_PAREN_END)
 		if err != nil {
-			return GenqAnnotation{}, err
+			return GenqArgumentList{}, err
 		}
 	}
 
-	return GenqAnnotation{
-		Name:        annotationName,
-		NamedParams: params,
-		Params:      positional,
+	return GenqArgumentList{
+		NamedArgs:      params,
+		PositionalArgs: positional,
 	}, nil
 }
 
-func (p *Parser) parseNamedAssignment() (*GenqAnnotationParameter, *ParsingError) {
+func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
+	_, err := p.eat(TOKEN_ANNOTATION)
+	if err != nil {
+		return GenqAnnotation{}, err
+	}
+
+	annotationIdentifier, err := p.parseGenqIdentifier()
+	if err != nil {
+		return GenqAnnotation{}, err
+	}
+
+	var argumentList GenqArgumentList = GenqArgumentList{}
+	if p.lookahead == TOKEN_PAREN_START {
+		// Annotation is an invocation
+		argumentList, err = p.parseArgumentList()
+	}
+
+	return GenqAnnotation{
+		Identifier: *annotationIdentifier,
+		Arguments:  argumentList,
+	}, nil
+}
+
+func (p *Parser) parseNamedAssignment() (*GenqNamedExpression, *ParsingError) {
 	name, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
 		return nil, err
@@ -205,7 +216,7 @@ func (p *Parser) parseNamedAssignment() (*GenqAnnotationParameter, *ParsingError
 		return nil, err
 	}
 
-	return &GenqAnnotationParameter{
+	return &GenqNamedExpression{
 		Name:  name,
 		Value: value,
 	}, nil
@@ -388,7 +399,7 @@ func (p *Parser) parseTypeReference() (GenqNamedType, *ParsingError) {
 
 	for p.isReturnTypeOfFunction() {
 		p.eat(TOKEN_IDENTIFIER)
-		paramList, err := p.parseParamList()
+		paramList, err := p.parseFormalParameterList()
 
 		if err != nil {
 			return GenqNamedType{}, err
@@ -405,32 +416,35 @@ func (p *Parser) parseTypeReference() (GenqNamedType, *ParsingError) {
 	return typeRef, nil
 }
 
-func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
-	p.eat(TOKEN_PAREN_START)
+func (p *Parser) parseFormalParameterList() (GenqFormalParameterList, *ParsingError) {
+	_, err := p.eat(TOKEN_PAREN_START)
+	if err != nil {
+		return GenqFormalParameterList{}, err
+	}
 
-	positionalParams := []GenqPositionalParam{}
-	namedParams := []GenqNamedParam{}
+	positionalParams := []GenqPositionalFormalParameter{}
+	namedParams := []GenqFormalNamedParameter{}
 
 	for p.lookahead != TOKEN_PAREN_END && p.lookahead != TOKEN_CURLY_START {
 		if p.lookahead == TOKEN_IDENTIFIER {
 			typeRef, err := p.parseTypeReference()
 			if err != nil {
-				return GenqParamList{}, err
+				return GenqFormalParameterList{}, err
 			}
 
 			name, err := p.eat(TOKEN_IDENTIFIER)
 			if err != nil {
-				return GenqParamList{}, err
+				return GenqFormalParameterList{}, err
 			}
 
 			if p.lookahead == TOKEN_COMMA {
 				_, err := p.eat(TOKEN_COMMA)
 				if err != nil {
-					return GenqParamList{}, err
+					return GenqFormalParameterList{}, err
 				}
 			}
 
-			positionalParams = append(positionalParams, GenqPositionalParam{
+			positionalParams = append(positionalParams, GenqPositionalFormalParameter{
 				ParamType: typeRef,
 				Name:      name,
 			})
@@ -440,13 +454,13 @@ func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
 	if p.lookahead == TOKEN_CURLY_START {
 		_, err := p.eat(TOKEN_CURLY_START)
 		if err != nil {
-			return GenqParamList{}, err
+			return GenqFormalParameterList{}, err
 		}
 
 		for p.lookahead != TOKEN_CURLY_END {
 			namedParam, err := p.parseNamedParam()
 			if err != nil {
-				return GenqParamList{}, err
+				return GenqFormalParameterList{}, err
 			}
 
 			namedParams = append(namedParams, namedParam)
@@ -454,50 +468,50 @@ func (p *Parser) parseParamList() (GenqParamList, *ParsingError) {
 			if p.lookahead == TOKEN_COMMA {
 				_, err := p.eat(TOKEN_COMMA)
 				if err != nil {
-					return GenqParamList{}, err
+					return GenqFormalParameterList{}, err
 				}
 			}
 		}
 
 		_, err = p.eat(TOKEN_CURLY_END)
 		if err != nil {
-			return GenqParamList{}, err
+			return GenqFormalParameterList{}, err
 		}
 	}
 
-	_, err := p.eat(TOKEN_PAREN_END)
+	_, err = p.eat(TOKEN_PAREN_END)
 	if err != nil {
-		return GenqParamList{}, err
+		return GenqFormalParameterList{}, err
 	}
 
-	return GenqParamList{
+	return GenqFormalParameterList{
 		PositionalParams: positionalParams,
 		NamedParams:      namedParams,
 	}, nil
 }
 
-func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingError) {
+func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration, *ParsingError) {
 	_, err := p.eat(TOKEN_CLASS)
 	if err != nil {
-		return GenqClass{}, err
+		return GenqClassDeclaration{}, err
 	}
 
 	classIdentifier, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
-		return GenqClass{}, err
+		return GenqClassDeclaration{}, err
 	}
 
 	err = p.eatUntil(TOKEN_CURLY_START)
 	if err != nil {
-		return GenqClass{}, err
+		return GenqClassDeclaration{}, err
 	}
 
 	_, err = p.eat(TOKEN_CURLY_START)
 	if err != nil {
-		return GenqClass{}, err
+		return GenqClassDeclaration{}, err
 	}
 
-	var genqConstructorSignature GenqConstructorSignature
+	var genqConstructorSignature GenqConstructor
 	hasPrivateConstructor := false
 
 	for {
@@ -508,37 +522,37 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingE
 		if p.lookahead == TOKEN_CONST && p.currentScope == 1 {
 			_, err := p.eat(TOKEN_CONST)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 		}
 
 		if p.lookahead == TOKEN_IDENTIFIER {
 			cn, err := p.eat(TOKEN_IDENTIFIER)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 
 			if cn == classIdentifier && p.lookahead == TOKEN_DOT {
 				_, err := p.eat(TOKEN_DOT)
 				if err != nil {
-					return GenqClass{}, err
+					return GenqClassDeclaration{}, err
 				}
 
 				constructorName, err := p.eat(TOKEN_IDENTIFIER)
 				if err != nil {
-					return GenqClass{}, err
+					return GenqClassDeclaration{}, err
 				}
 
 				if constructorName == "_" {
 					// This is a private constructor
 					err := p.eatUntil(TOKEN_SEMICOLON)
 					if err != nil {
-						return GenqClass{}, err
+						return GenqClassDeclaration{}, err
 					}
 
 					_, err = p.eat(TOKEN_SEMICOLON)
 					if err != nil {
-						return GenqClass{}, err
+						return GenqClassDeclaration{}, err
 					}
 
 					hasPrivateConstructor = true
@@ -547,7 +561,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingE
 		} else if p.lookahead == TOKEN_CURLY_END {
 			_, err := p.eat(TOKEN_CURLY_END)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 
 			if p.currentScope == 0 {
@@ -556,41 +570,41 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingE
 		} else if p.lookahead == TOKEN_FACTORY {
 			_, err := p.eat(TOKEN_FACTORY)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 
 			cn, err := p.eat(TOKEN_IDENTIFIER)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 
 			if p.lookahead == TOKEN_PAREN_START && cn == classIdentifier {
 				// Factory matches class name
 				// This is the chosen constructor
-				genqConstructorSignature, err = p.parseGenqConstructorSignature()
+				genqConstructorSignature, err = p.parseGenqConstructor()
 				if err != nil {
-					return GenqClass{}, err
+					return GenqClassDeclaration{}, err
 				}
 
 				err := p.eatUntil(TOKEN_SEMICOLON)
 				if err != nil {
-					return GenqClass{}, err
+					return GenqClassDeclaration{}, err
 				}
 
 				_, err = p.eat(TOKEN_SEMICOLON)
 				if err != nil {
-					return GenqClass{}, err
+					return GenqClassDeclaration{}, err
 				}
 			}
 		} else {
 			_, err := p.eat(p.lookahead)
 			if err != nil {
-				return GenqClass{}, err
+				return GenqClassDeclaration{}, err
 			}
 		}
 	}
 
-	return GenqClass{
+	return GenqClassDeclaration{
 		Name:                  classIdentifier,
 		Constructor:           genqConstructorSignature,
 		HasPrivateConstructor: hasPrivateConstructor,
@@ -598,56 +612,18 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClass, *ParsingE
 	}, nil
 }
 
-func (p *Parser) parseGenqConstructorSignature() (GenqConstructorSignature, *ParsingError) {
-	_, err := p.eat(TOKEN_PAREN_START)
+func (p *Parser) parseGenqConstructor() (GenqConstructor, *ParsingError) {
+	formalParams, err := p.parseFormalParameterList()
 	if err != nil {
-		return GenqConstructorSignature{}, err
+		return GenqConstructor{}, err
 	}
 
-	if p.lookahead == TOKEN_PAREN_END {
-		_, err := p.eat(TOKEN_PAREN_END)
-		if err != nil {
-			return GenqConstructorSignature{}, err
-		}
-
-		return GenqConstructorSignature{
-			Params: []GenqNamedParam{},
-		}, nil
-	}
-
-	_, err = p.eat(TOKEN_CURLY_START)
-	if err != nil {
-		return GenqConstructorSignature{}, err
-	}
-
-	params := []GenqNamedParam{}
-	for p.lookahead != TOKEN_CURLY_END {
-		namedParam, err := p.parseNamedParam()
-		if err != nil {
-			return GenqConstructorSignature{}, err
-		}
-
-		params = append(params, namedParam)
-
-		if p.lookahead == TOKEN_COMMA {
-			_, err := p.eat(TOKEN_COMMA)
-			if err != nil {
-				return GenqConstructorSignature{}, err
-			}
-		}
-	}
-
-	_, err = p.eat(TOKEN_CURLY_END)
-	if err != nil {
-		return GenqConstructorSignature{}, err
-	}
-
-	return GenqConstructorSignature{
-		Params: params,
+	return GenqConstructor{
+		ParamList: formalParams,
 	}, nil
 }
 
-func (p *Parser) parseNamedParam() (GenqNamedParam, *ParsingError) {
+func (p *Parser) parseNamedParam() (GenqFormalNamedParameter, *ParsingError) {
 	required := false
 	annotation := GenqAnnotation{}
 
@@ -664,7 +640,7 @@ func (p *Parser) parseNamedParam() (GenqNamedParam, *ParsingError) {
 	if p.lookahead == TOKEN_REQUIRED {
 		_, err := p.eat(TOKEN_REQUIRED)
 		if err != nil {
-			return GenqNamedParam{}, nil
+			return GenqFormalNamedParameter{}, nil
 		}
 
 		required = true
@@ -672,15 +648,15 @@ func (p *Parser) parseNamedParam() (GenqNamedParam, *ParsingError) {
 
 	paramType, err := p.parseTypeReference()
 	if err != nil {
-		return GenqNamedParam{}, err
+		return GenqFormalNamedParameter{}, err
 	}
 
 	paramName, err := p.eat(TOKEN_IDENTIFIER)
 	if err != nil {
-		return GenqNamedParam{}, nil
+		return GenqFormalNamedParameter{}, nil
 	}
 
-	return GenqNamedParam{
+	return GenqFormalNamedParameter{
 		ParamType:  paramType,
 		Name:       paramName,
 		Required:   required,

@@ -1,10 +1,10 @@
 package parser
 
-type GenqClass struct {
+type GenqClassDeclaration struct {
 	Name                  string
 	Annotation            GenqAnnotation
 	HasPrivateConstructor bool
-	Constructor           GenqConstructorSignature
+	Constructor           GenqConstructor
 }
 
 type GenqJsonEnum struct {
@@ -22,17 +22,16 @@ type GenqNamedType struct {
 	Optional     bool
 	GenericTypes []GenqNamedType
 	ReturnType   *GenqNamedType
-	ParamList    GenqParamList
+	ParamList    GenqFormalParameterList
 	IsFunction   bool
 }
 
 type GenqAnnotation struct {
-	Name        string
-	Params      []GenqValue
-	NamedParams []GenqAnnotationParameter
+	Identifier GenqIdentifier
+	Arguments  GenqArgumentList
 }
 
-type GenqAnnotationParameter struct {
+type GenqNamedExpression struct {
 	Name  string
 	Value GenqValue
 }
@@ -50,27 +49,28 @@ type GenqIdentifier struct {
 	Next *GenqIdentifier
 }
 
-type GenqConstructorSignature struct {
-	Params []GenqNamedParam
+type GenqConstructor struct {
+	ParamList GenqFormalParameterList
 }
 
-type GenqNamedParam struct {
-	Required   bool
-	ParamType  GenqNamedType
-	Name       string
-	Annotation GenqAnnotation
-}
-
-type GenqJsonKeyAnnotation struct {
-	Name string
-}
-
-type GenqPositionalParam struct {
+type GenqPositionalFormalParameter struct {
 	ParamType GenqNamedType
 	Name      string
 }
 
-type GenqParamList struct {
-	PositionalParams []GenqPositionalParam
-	NamedParams      []GenqNamedParam
+type GenqFormalNamedParameter struct {
+	Required   bool
+	Name       string
+	ParamType  GenqNamedType
+	Annotation GenqAnnotation
+}
+
+type GenqFormalParameterList struct {
+	PositionalParams []GenqPositionalFormalParameter
+	NamedParams      []GenqFormalNamedParameter
+}
+
+type GenqArgumentList struct {
+	PositionalArgs []GenqValue
+	NamedArgs      []GenqNamedExpression
 }

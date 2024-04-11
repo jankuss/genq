@@ -2,15 +2,15 @@ package templates
 
 import . "genq/parser"
 
-func Template(str []string, params GenqClass) []string {
-	str = templateMixin(str, params)
+func Template(str []string, classDecl GenqClassDeclaration) []string {
+	str = templateMixin(str, classDecl)
 	str = append(str, "")
-	str = templateConstructor(str, params)
+	str = templateConstructor(str, classDecl)
 	str = append(str, "")
-	str = templateCopyWith(str, params)
+	str = templateCopyWith(str, classDecl)
 
 	shouldGenerateJson := false
-	for _, param := range params.Annotation.NamedParams {
+	for _, param := range classDecl.Annotation.Arguments.NamedArgs {
 		if param.Name == "json" {
 			shouldGenerateJson = param.Value.BooleanValue
 		}
@@ -18,9 +18,9 @@ func Template(str []string, params GenqClass) []string {
 
 	if shouldGenerateJson {
 		str = append(str, "")
-		str = templateFromJson(str, params)
+		str = templateFromJson(str, classDecl)
 		str = append(str, "")
-		str = templateToJson(str, params)
+		str = templateToJson(str, classDecl)
 	}
 
 	return str

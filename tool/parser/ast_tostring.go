@@ -24,7 +24,7 @@ func (t GenqNamedType) String() string {
 	return str
 }
 
-func (t GenqParamList) String() string {
+func (t GenqFormalParameterList) String() string {
 	str := "("
 	for i, p := range t.PositionalParams {
 		str += p.ParamType.String()
@@ -51,7 +51,7 @@ func (t GenqParamList) String() string {
 	return str
 }
 
-func (t GenqNamedParam) String() string {
+func (t GenqFormalNamedParameter) String() string {
 	str := ""
 	if t.Required {
 		str += "required "
