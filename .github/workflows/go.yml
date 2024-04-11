@@ -89,9 +89,19 @@ jobs:
       run: dart analyze
     - name: Run example
       run: dart ./bin/json.dart
+  run-int-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+    - name: Run integration test
+      run: ./scripts/run_int_test.sh
   goreleaser:
     runs-on: ubuntu-latest
-    needs: [test, test-generated, check-formatting, run-example]
+    needs: [test, test-generated, check-formatting, run-example, run-int-test]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
