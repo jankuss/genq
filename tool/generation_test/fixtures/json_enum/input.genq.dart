@@ -93,9 +93,9 @@ class _$UserCopyWithImpl implements $UserCopyWith {
 User $UserFromJson(Map<String, dynamic> json) {
   return User(
     name: json['full_name'] as String,
-    age: json['age'] == null ? null : (json['age'] as int?),
+    age: json['age'] == null ? null : json['age'] as int?,
     registered: json['registered'] as bool,
-    status: json['status'] == null ? null : ($UserStatusFromJson(json['status']) as UserStatus?),
+    status: json['status'] == null ? null : $UserStatusFromJson(json['status']),
   );
 }
 

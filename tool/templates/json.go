@@ -7,7 +7,7 @@ import (
 )
 
 func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
-	str := typeFromJson(annotation, typeRef, valueName)
+	str, requiresCast := typeFromJson(annotation, typeRef, valueName)
 
 	defaultValueAnnotation := ReadAnnotationNamedParameter(annotation, "defaultValue")
 	defaultValue := "null"
@@ -19,49 +19,55 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valu
 		}
 	}
 
+  expr := fmt.Sprintf("%s", str)
+  if requiresCast {
+    expr = fmt.Sprintf("%s as %s", str, typeRef.String())
+  }
+
+
 	if typeRef.Optional {
-		return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
+		return fmt.Sprintf("%s == null ? %s : %s", valueName, defaultValue, expr)
 	} else {
 		if defaultValueAnnotation != nil {
-			return fmt.Sprintf("%s == null ? %s : (%s as %s)", valueName, defaultValue, str, typeRef.String())
+			return fmt.Sprintf("%s == null ? %s : %s", valueName, defaultValue, expr)
 		}
 
-		return str + " as " + typeRef.String()
+		return expr
 	}
 }
 
-func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
 	if typeRef.Name == "String" {
-		return valueName
+		return valueName, true
 	}
 
 	if typeRef.Name == "int" {
-		return valueName
+		return valueName, true
 	}
 
 	if typeRef.Name == "double" {
-		return valueName
+		return valueName, true
 	}
 
 	if typeRef.Name == "bool" {
-		return valueName
+		return valueName, true
 	}
 
 	if typeRef.Name == "num" {
-		return valueName
+		return valueName, true
 	}
 
 	if typeRef.Name == "List" {
-		return "List.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()"
+		return "List.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()", false
 	}
 
 	if typeRef.Name == "Set" {
-		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
+		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()", false
 	}
 
 	customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
 	if customFromJson != nil && customFromJson.Value.Reference != nil {
-		return customFromJson.Value.Reference.String() + "(" + valueName + ")"
+		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
 	}
 
 	// For every other type, we call the generated ${Type}FromJson method.
@@ -73,7 +79,7 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 		params = append(params, unknownEnumValue.Value.Reference.String())
 	}
 
-	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")"
+	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")", false
 }
 
 func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
