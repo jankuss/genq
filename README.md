@@ -29,7 +29,7 @@ but with a focus on **lightning-fast performance**.
     - [Notes](#notes)
   - [How?](#how)
     - [Notes on the subset parser](#notes-on-the-subset-parser)
-  - [Downsides of `genq`](#downsides-of-genq)
+  - [When should I use `genq` over `build_runner`?](#when-should-i-use-genq-over-build_runner)
   - [Future Plans](#future-plans)
 
 # Benchmarks
