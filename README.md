@@ -256,5 +256,5 @@ The subset parser is written for the specific structures of data classes as defi
 
 ## Future Plans
 
-- [ ] JSON Serialization/Deserialization
+- [ ] Editor support (VSCode, IntelliJ)
 - [ ] Extensibility
