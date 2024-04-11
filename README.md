@@ -21,6 +21,16 @@ but with a focus on **lightning-fast performance**.
   - [3. Define your data classes](#3-define-your-data-classes)
   - [4. Generate the code](#4-generate-the-code)
 - [Defining Data Classes](#defining-data-classes)
+  - [JSON Serialization/Deserialization](#json-serializationdeserialization)
+    - [Customize JSON Serialization](#customize-json-serialization)
+      - [Custom fromJson and toJson functions](#custom-fromjson-and-tojson-functions)
+      - [Unknowns enum values](#unknowns-enum-values)
+    - [Enums](#enums)
+    - [Notes](#notes)
+  - [How?](#how)
+    - [Notes on the subset parser](#notes-on-the-subset-parser)
+  - [Downsides of `genq`](#downsides-of-genq)
+  - [Future Plans](#future-plans)
 
 # Benchmarks
 
@@ -248,16 +258,15 @@ The fundamental idea behind the JSON codegen for it to be fast and efficient is 
 
 genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than `build_runner`, which uses the `analyzer` package. Code generation is also done in parallel for each file, which further speeds up the process.
 
-Also, the code generator only cares about the information within the data class definition, which allows it to ignore the rest of the codebase.
-
 ### Notes on the subset parser
 
 The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues/new) with the code that caused the error.
 
-## Downsides of `genq`
+## When should I use `genq` over `build_runner`?
 
-- `build_runner` is extensible & pluggable and can be used for a wide variety of tasks, whereas `genq` is focused on data class generation. Freezed for example leverages this to generate JSON Serialization code using `json_serializable`.
-- `genq` is written in Go, so it does not neatly integrate with the Dart ecosystem.
+One great thing: you don't have to choose! You can use both in your project. A good guidline would be: Use `genq` for data class generation in your day-to-day development, and `build_runner` for more complex code generation tasks.
+
+If your project is sufficiently small, you might not even need `genq`. However, if you find yourself or your team spending a lot of time waiting for `build_runner` to generate code, `genq` might be a good alternative.
 
 ## Future Plans
 
