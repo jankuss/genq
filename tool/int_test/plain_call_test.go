@@ -11,8 +11,8 @@ func TestPlainCall(t *testing.T) {
 	setup()
 	defer teardown()
 
-  addGenqTestFile("sut/test.dart", "PlainCallTest")
-  addGenqTestFile("sut/abc.dart", "PlainCallTest")
+	addGenqTestFile("sut/test.dart", "PlainCallTest")
+	addGenqTestFile("sut/abc.dart", "PlainCallTest")
 
 	out, error := exec.Command(os.Getenv("GENQ_PATH")).Output()
 	if error != nil {
@@ -40,17 +40,16 @@ func TestPlainCall(t *testing.T) {
 		t.Fatalf("Did not expect error: %s", err)
 	}
 
-  if len(content) == 0 {
-    t.Fatalf("Expected file 'sut/test.genq.dart' to contain content")
-  }
+	if len(content) == 0 {
+		t.Fatalf("Expected file 'sut/test.genq.dart' to contain content")
+	}
 
 	content, err = os.ReadFile("sut/abc.genq.dart")
 	if err != nil {
 		t.Fatalf("Did not expect error: %s", err)
 	}
 
-  if len(content) == 0 {
-    t.Fatalf("Expected file 'sut/abc.genq.dart' to contain content")
-  }
+	if len(content) == 0 {
+		t.Fatalf("Expected file 'sut/abc.genq.dart' to contain content")
+	}
 }
-

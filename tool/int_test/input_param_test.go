@@ -26,11 +26,11 @@ func TestInputParam(t *testing.T) {
 		t.Fatalf("Did not expected output to contain 'input_param2.genq.dart'")
 	}
 
-  if _, err := os.Stat("sut/input_param.genq.dart"); os.IsNotExist(err) {
-    t.Fatalf("Expected file 'sut/input_param.genq.dart' to exist")
-  }
+	if _, err := os.Stat("sut/input_param.genq.dart"); os.IsNotExist(err) {
+		t.Fatalf("Expected file 'sut/input_param.genq.dart' to exist")
+	}
 
-  if _, err := os.Stat("sut/input_param2.genq.dart"); !os.IsNotExist(err) {
-    t.Fatalf("Expected file 'sut/input_param2.genq.dart' to not exist")
-  }
+	if _, err := os.Stat("sut/input_param2.genq.dart"); !os.IsNotExist(err) {
+		t.Fatalf("Expected file 'sut/input_param2.genq.dart' to not exist")
+	}
 }

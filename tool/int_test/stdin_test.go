@@ -1,5 +1,6 @@
 package inttest
-/* 
+
+/*
 import (
 	"bytes"
 	"os"
