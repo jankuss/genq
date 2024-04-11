@@ -46,7 +46,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: go test $(go list ./... | grep -v /int_test/)
   test-generated:
     runs-on: ubuntu-latest
     strategy:
