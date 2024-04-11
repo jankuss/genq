@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
-(cd ../../tool && go build -o ../examples/json)
-./genq
+if [ -z "$GENQ_PATH" ]; then
+  GENQ_PATH=genq
+fi
+
+# Run command under GENQ_PATH
+$GENQ_PATH

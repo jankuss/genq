@@ -5,7 +5,7 @@ set -e
 if [ -z "$GENQ_PATH" ]; then
   rm tool/genq || true
   (cd tool && go build .)
-  GENQ_PATH=../genq
+  GENQ_PATH=$(pwd)/tool/genq
 fi
 
 (cd tool/int_test && GENQ_PATH=$GENQ_PATH go test -p 1)
