@@ -14,7 +14,7 @@ func TestPlainCall(t *testing.T) {
   addGenqTestFile("sut/test.dart", "PlainCallTest")
   addGenqTestFile("sut/abc.dart", "PlainCallTest")
 
-	out, error := exec.Command("genq").Output()
+	out, error := exec.Command(os.Getenv("GENQ_PATH")).Output()
 	if error != nil {
 		t.Fatalf("Did not expect error: %s", error)
 	}

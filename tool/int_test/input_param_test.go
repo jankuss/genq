@@ -13,7 +13,7 @@ func TestInputParam(t *testing.T) {
 
 	addGenqTestFile("sut/input_param.dart", "InputParamTest")
 	addGenqTestFile("sut/input_param2.dart", "InputParamTest")
-	out, err := exec.Command("genq", "--input", "sut/input_param.dart").Output()
+	out, err := exec.Command(os.Getenv("GENQ_PATH"), "--input", "sut/input_param.dart").Output()
 	if err != nil {
 		t.Fatal(err)
 	}

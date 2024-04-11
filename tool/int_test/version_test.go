@@ -1,6 +1,7 @@
 package inttest
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
@@ -10,7 +11,7 @@ func TestVersion(t *testing.T) {
   setup()
   defer teardown()
 
-  out, err := exec.Command("genq", "--version").Output()
+  out, err := exec.Command(os.Getenv("GENQ_PATH"), "--version").Output()
   if err != nil {
     t.Fatal(err)
   }
