@@ -70,7 +70,9 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: dist
-        path: ./dist
+        path: ./packages/genq_test/dist
+    - name: chmod
+      run: chmod +x $(pwd)/dist/genq_linux_amd64_v1/genq
     - name: run_tests.sh
       run: GENQ_PATH=$(pwd)/dist/genq_linux_amd64_v1/genq ./run_tests.sh
   run-example:
@@ -92,7 +94,9 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: dist
-        path: ./dist
+        path: ./examples/json/dist
+    - name: chmod
+      run: chmod +x $(pwd)/dist/genq_linux_amd64_v1/genq
     - name: Generate
       run: GENQ_PATH=$(pwd)/dist/genq_linux_amd64_v1/genq ./generate.sh
     - name: Analyze
@@ -112,6 +116,8 @@ jobs:
       with:
         name: dist
         path: ./dist
+    - name: chmod
+      run: chmod +x $(pwd)/dist/genq_linux_amd64_v1/genq
     - name: Run integration test
       run: GENQ_PATH=$(pwd)/dist/genq_linux_amd64_v1/genq ./scripts/run_int_tests.sh
   goreleaser:
