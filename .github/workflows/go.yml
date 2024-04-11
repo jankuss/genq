@@ -53,7 +53,7 @@ jobs:
     - name: Test
       run: go test $(go list ./... | grep -v /int_test)
   test-generated:
-    needs: [goreleaser]
+    needs: [build]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -81,7 +81,7 @@ jobs:
     - name: run_tests.sh
       run: GENQ_PATH=$(pwd)/dist/genq_linux_amd64_v1/genq ./run_tests.sh
   run-example:
-    needs: [goreleaser]
+    needs: [build]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -109,7 +109,7 @@ jobs:
     - name: Run example
       run: dart ./bin/json.dart
   run-int-test:
-    needs: [goreleaser]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -137,12 +137,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-      # More assembly might be required: Docker logins, GPG, etc.
-      # It all depends on your needs.
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
           version: latest
           args: build --clean --snapshot
