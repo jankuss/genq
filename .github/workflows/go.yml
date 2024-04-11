@@ -6,8 +6,13 @@ name: Go
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - "*"
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: write
 
 jobs:
   check-formatting:
@@ -120,7 +125,7 @@ jobs:
       run: chmod +x $(pwd)/dist/genq_linux_amd64_v1/genq
     - name: Run integration test
       run: GENQ_PATH=$(pwd)/dist/genq_linux_amd64_v1/genq ./scripts/run_int_tests.sh
-  goreleaser:
+  build:
     runs-on: ubuntu-latest
     needs: [test, check-formatting]
     steps:
@@ -151,4 +156,26 @@ jobs:
           name: dist
           path: |
             ./tool/dist
-
+  goreleaser-deploy:
+    needs: [build, test, check-formatting, run-example, run-int-test, test-generated]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+          workdir: ./tool
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_BREW: ${{ secrets.GH_BREW }}
