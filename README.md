@@ -1,20 +1,28 @@
-# genq: Blazing Fast Data Class Generation for Dart
+# Motivation
 
-![](./docs/preview.gif)
+With dart, creating data classes can be tedious. You have the choice between:
 
-**Tired of waiting for build_runner to churn through your codebase?**
+- Writing them by hand, which is error-prone and time-consuming.
+- Using code generation tools like `build_runner` with `freezed`, which become slow for large projects.
 
 genq cuts through the wait and generates data classes for your Dart projects in milliseconds, not minutes. ⚡️
 
-Inspired by **freezed**, genq offers a familiar syntax for defining data classes, but with a focus on **lightning-fast performance**. No need to write copyWith, toString, or equals methods by hand - genq does it all for you.
+Inspired by **freezed**, genq offers a familiar syntax for defining data classes, 
+but with a focus on **lightning-fast performance**. 
 
-**Here's what genq brings to the table:**
+# Index
 
-* **Reduce Boilerplate:** genq generates the boilerplate code for you, so you can focus on what matters.
-* **Speed Demon:** Generate data classes in a flash, even for large projects.
-* **Simple and Familiar:** Syntax similar to freezed, making it easy to learn and use.
+- [Motivation](#motivation)
+- [Index](#index)
+- [Benchmarks](#benchmarks)
+- [Getting Started](#getting-started)
+  - [1. Install](#1-install)
+  - [2. Add `genq` to your project](#2-add-genq-to-your-project)
+  - [3. Define your data classes](#3-define-your-data-classes)
+  - [4. Generate the code](#4-generate-the-code)
+- [Defining Data Classes](#defining-data-classes)
 
-## `genq` vs `build_runner` + `freezed`
+# Benchmarks
 
 `build_runner` + `freezed` 🐌 | `genq` 🚀
 :-------------------------:|:-------------------------:
@@ -27,7 +35,7 @@ In this benchmark (located in `./benchmarks`), _count_ is the number of files in
 1. Never trust a benchmark you didn't falsify yourself.
 2. genq is optimized to perform one task and one task only - data class generation, whereas build_runner is built to do a lot more. Take this into account when choosing between the two.
 
-## Getting started is easy
+## Getting Started
 
 ### 1. Install
 
@@ -73,12 +81,9 @@ Run the genq command in your project directory, and you will have your desired d
 genq
 ```
 
-## Defining Data Classes
+# Defining Data Classes
 
-To define a data class, first you need to annotate your class with `@genq`. Also, you need to use the generated mixin with the name `_$<ClassName>`.
-Additionally, you need to define a factory constructor with named parameters and a redirecting constructor with the name `_<ClassName>`.
-
-At first, you might get errors from the IDE because the generated file is not yet created. After running `genq`, the errors should disappear.
+To define a data class, you need to annotate the class with `@genq` and provide a factory constructor with named parameters.
 
 ```dart
 import 'package:genq/genq.dart'; // <- Import genq
