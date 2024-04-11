@@ -19,11 +19,10 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valu
 		}
 	}
 
-  expr := fmt.Sprintf("%s", str)
-  if requiresCast {
-    expr = fmt.Sprintf("%s as %s", str, typeRef.String())
-  }
-
+	expr := fmt.Sprintf("%s", str)
+	if requiresCast {
+		expr = fmt.Sprintf("%s as %s", str, typeRef.String())
+	}
 
 	if typeRef.Optional {
 		return fmt.Sprintf("%s == null ? %s : %s", valueName, defaultValue, expr)
