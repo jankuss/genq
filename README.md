@@ -1,3 +1,5 @@
+[![Go](https://github.com/jankuss/genq/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/jankuss/genq/actions/workflows/go.yml)
+
 # Motivation
 
 With dart, creating data classes can be tedious. You have the choice between:
