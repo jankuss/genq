@@ -198,8 +198,8 @@ class UserName {
 class User with _$User {
   factory User({
     @JsonKey(
-      fromJson: _customFromJson,
-      toJson: _customToJson,
+      fromJson: UserName.fromJson,
+      toJson: UserName.toJson,
     )
     required UserName name,
     required int age,
