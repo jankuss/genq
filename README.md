@@ -167,8 +167,8 @@ class User with _$User {
     // Customizing the JSON key for the field 'name'. When deserializing, the value of 'full_name' will be assigned to the 'name' field.
     @JsonKey(name: 'full_name')
     required String name,
-    // Excluding the field 'age' from JSON serialization/deserialization.
-    @JsonKey(includeFromJson: false, includeToJson: false)
+    // Providing a default value for the field 'age'. If the field is not present in the JSON, the default value will be used.
+    @JsonKey(defaultValue: 99)
     required int age,
   }) = _User;
 }
