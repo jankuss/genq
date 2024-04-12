@@ -19,6 +19,8 @@ but with a focus on **lightning-fast performance**.
 
 <img src="docs/comparison.png" alt="logo" width="100%" />
 
+The above image shows the difference in performance between `build_runner` and `genq` for generating 2500 data classes. See more details in the [benchmarks](#benchmarks) section.
+
 # Index
 
 - [Motivation](#motivation)
@@ -249,7 +251,7 @@ part 'user.genq.dart';
 enum Role {
   // You can annotate the enum values with @JsonValue to customize the JSON serialization/deserialization.
   // For example, the string 'ADMIN' will get deserialized to the Role.admin value and vice versa.
-  // If you don't provide a value for @JsonValue, the enum value will be serialized/deserialized as a string.
+  // If you don't provide a value for @JsonValue, the enum key is used.
   @JsonValue('ADMIN')
   admin,
   @JsonValue('USER')
