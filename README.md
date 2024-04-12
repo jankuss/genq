@@ -74,7 +74,7 @@ Or download the latest release from the [releases page](https://github.com/janku
 ```
 dependencies:
   # ... Other dependencies ...
-  genq: ^0.2.0
+  genq: ^0.3.0
 ```
 
 ### 3. Define your data classes
