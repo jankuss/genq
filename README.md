@@ -17,6 +17,8 @@ genq cuts through the wait and generates data classes for your Dart projects in 
 Inspired by **freezed**, genq offers a familiar syntax for defining data classes, 
 but with a focus on **lightning-fast performance**. 
 
+<img src="docs/comparison.png" alt="logo" width="100%" />
+
 # Index
 
 - [Motivation](#motivation)
