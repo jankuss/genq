@@ -30,6 +30,7 @@ but with a focus on **lightning-fast performance**.
   - [3. Define your data classes](#3-define-your-data-classes)
   - [4. Generate the code](#4-generate-the-code)
 - [Defining Data Classes](#defining-data-classes)
+  - [Overview](#overview)
   - [JSON Serialization/Deserialization](#json-serializationdeserialization)
     - [Customize JSON Serialization](#customize-json-serialization)
       - [Custom fromJson and toJson functions](#custom-fromjson-and-tojson-functions)
@@ -101,6 +102,8 @@ genq
 ```
 
 # Defining Data Classes
+
+## Overview
 
 To define a data class, you need to annotate the class with `@genq` and provide a factory constructor with named parameters.
 
