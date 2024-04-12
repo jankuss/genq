@@ -212,7 +212,8 @@ class User with _$User {
 
 #### Unknowns enum values
 
-You can provide a custom function to handle unknown enum values during deserialization using the `unknownEnumValue` parameter of the `@JsonKey` annotation.
+You can provide a value for unknown enum values using the `unknownEnumValue` parameter of the `@JsonKey` annotation.
+When deserializing and encountering an unknown value, the `unknownEnumValue` will be used instead of throwing an exception.
 
 ```dart
 import 'package:genq/genq.dart';
@@ -223,11 +224,13 @@ part 'user.genq.dart';
 enum Role {
   admin,
   user,
+  unknown,
 }
 
 @Genq(json: true)
 class User with _$User {
   factory User({
+    @JsonKey(unknownEnumValue: Role.unknown)
     required Role role,
   }) = _User;
 }
@@ -246,6 +249,7 @@ part 'user.genq.dart';
 enum Role {
   // You can annotate the enum values with @JsonValue to customize the JSON serialization/deserialization.
   // For example, the string 'ADMIN' will get deserialized to the Role.admin value and vice versa.
+  // If you don't provide a value for @JsonValue, the enum value will be serialized/deserialized as a string.
   @JsonValue('ADMIN')
   admin,
   @JsonValue('USER')
