@@ -1,64 +1,76 @@
 package parser
 
-type GenqClass struct {
+type GenqClassDeclaration struct {
 	Name                  string
+	Annotation            GenqAnnotation
 	HasPrivateConstructor bool
-	Constructor           GenqConstructorSignature
-	FromJsonConstructor   GenqFromJsonConstructor
-	HasJsonConstructor    bool
+	Constructor           GenqConstructor
 }
 
-type GenqTypeReference struct {
+type GenqJsonEnum struct {
+	Name       string
+	EnumValues []GenqJsonEnumValue
+}
+
+type GenqJsonEnumValue struct {
+	Annotation GenqAnnotation
+	Name       string
+}
+
+type GenqNamedType struct {
 	Name         string
 	Optional     bool
-	GenericTypes []GenqTypeReference
-	FunctionType *FunctionType
-	ReturnType   *GenqTypeReference
-	ParamList    GenqParamList
+	GenericTypes []GenqNamedType
+	ReturnType   *GenqNamedType
+	ParamList    GenqFormalParameterList
 	IsFunction   bool
 }
 
 type GenqAnnotation struct {
-	Name   string
-	Params []GenqAnnotationParameter
+	Identifier GenqIdentifier
+	Arguments  GenqArgumentList
 }
 
-type GenqAnnotationParameter struct {
+type GenqNamedExpression struct {
 	Name  string
 	Value GenqValue
 }
 
 type GenqValue struct {
+	RawValue     string
 	BooleanValue bool
 	StringValue  string
+	IntValue     int
+	Reference    *GenqIdentifier
 }
 
-type GenqFromJsonConstructor struct {
-	ParamType  GenqTypeReference
-	Identifier string
-}
-
-type GenqConstructorSignature struct {
-	Params []GenqNamedParam
-}
-
-type GenqNamedParam struct {
-	Required   bool
-	ParamType  GenqTypeReference
-	Name       string
-	Annotation GenqAnnotation
-}
-
-type GenqJsonKeyAnnotation struct {
+type GenqIdentifier struct {
 	Name string
+	Next *GenqIdentifier
 }
 
-type GenqPositionalParam struct {
-	ParamType GenqTypeReference
+type GenqConstructor struct {
+	ParamList GenqFormalParameterList
+}
+
+type GenqPositionalFormalParameter struct {
+	ParamType GenqNamedType
 	Name      string
 }
 
-type GenqParamList struct {
-	PositionalParams []GenqPositionalParam
-	NamedParams      []GenqNamedParam
+type GenqFormalNamedParameter struct {
+	Required   bool
+	Name       string
+	ParamType  GenqNamedType
+	Annotation GenqAnnotation
+}
+
+type GenqFormalParameterList struct {
+	PositionalParams []GenqPositionalFormalParameter
+	NamedParams      []GenqFormalNamedParameter
+}
+
+type GenqArgumentList struct {
+	PositionalArgs []GenqValue
+	NamedArgs      []GenqNamedExpression
 }

@@ -56,3 +56,23 @@ func TestParameterAnnotations(t *testing.T) {
 func TestNotRequiredParam(t *testing.T) {
 	testGenOutput(t, "not_required_param")
 }
+
+func TestJsonBasic(t *testing.T) {
+	testGenOutput(t, "json_basic")
+}
+
+func TestJsonEnum(t *testing.T) {
+	testGenOutput(t, "json_enum")
+}
+
+func TestJsonEnumUnknown(t *testing.T) {
+	testGenOutput(t, "json_enum_unknown")
+}
+
+func TestJsonEnumCustom(t *testing.T) {
+	testGenOutput(t, "json_enum_custom")
+}
+
+func TestJsonDefaultValue(t *testing.T) {
+	testGenOutput(t, "json_default_value")
+}

@@ -129,7 +129,16 @@ type generatorParserListener struct {
 	genCount         int
 }
 
-func (l *generatorParserListener) OnGenqClass(genqClass GenqClass) {
+func (l *generatorParserListener) OnGenqJsonEnum(genqJsonEnum GenqJsonEnum) {
+	if l.genCount > 0 {
+		l.generatorContext.addOutput([]string{""})
+	}
+
+	l.generatorContext.addOutput(TemplateJsonEnum([]string{}, genqJsonEnum))
+	l.genCount++
+}
+
+func (l *generatorParserListener) OnGenqClass(genqClass GenqClassDeclaration) {
 	if l.genCount > 0 {
 		l.generatorContext.addOutput([]string{""})
 	}

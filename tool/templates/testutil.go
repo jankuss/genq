@@ -12,7 +12,7 @@ func getNormalized(str string) []string {
 	return strings.Split(strings.Trim(str, "\n "), "\n")
 }
 
-func getFirstGenqClass(str string) parser.GenqClass {
+func getFirstGenqClass(str string) parser.GenqClassDeclaration {
 	p := parser.NewParser(str)
 	listener := &testParserListener{}
 	p.Parse(listener)
@@ -27,9 +27,12 @@ func compare(t *testing.T, actual []string, expect []string) {
 }
 
 type testParserListener struct {
-	genqClass parser.GenqClass
+	genqClass parser.GenqClassDeclaration
 }
 
-func (l *testParserListener) OnGenqClass(genqClass parser.GenqClass) {
+func (l *testParserListener) OnGenqClass(genqClass parser.GenqClassDeclaration) {
 	l.genqClass = genqClass
+}
+
+func (l *testParserListener) OnGenqJsonEnum(genqClass parser.GenqJsonEnum) {
 }

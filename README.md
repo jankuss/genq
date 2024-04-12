@@ -1,20 +1,50 @@
-# genq: Blazing Fast Data Class Generation for Dart
+# genq: Instant Data Class Generation for Dart
 
-![](./docs/preview.gif)
+[![Go](https://github.com/jankuss/genq/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/jankuss/genq/actions/workflows/go.yml)
+[![pub package](https://img.shields.io/pub/v/genq.svg)](https://pub.dev/packages/genq)
 
-**Tired of waiting for build_runner to churn through your codebase?**
+<img src="docs/logo.png" alt="logo" width="200"/>
+
+# Motivation
+
+With dart, creating data classes can be tedious. You have the choice between:
+
+- Writing them by hand, which is error-prone and time-consuming.
+- Using code generation tools like `build_runner` with `freezed`, which become slow for large projects.
 
 genq cuts through the wait and generates data classes for your Dart projects in milliseconds, not minutes. ⚡️
 
-Inspired by **freezed**, genq offers a familiar syntax for defining data classes, but with a focus on **lightning-fast performance**. No need to write copyWith, toString, or equals methods by hand - genq does it all for you.
+Inspired by **freezed**, genq offers a familiar syntax for defining data classes, 
+but with a focus on **lightning-fast performance**. 
 
-**Here's what genq brings to the table:**
+<img src="docs/comparison.png" alt="logo" width="100%" />
 
-* **Reduce Boilerplate:** genq generates the boilerplate code for you, so you can focus on what matters.
-* **Speed Demon:** Generate data classes in a flash, even for large projects.
-* **Simple and Familiar:** Syntax similar to freezed, making it easy to learn and use.
+The above image shows the difference in performance between `build_runner` and `genq` for generating 2500 data classes. See more details in the [benchmarks](#benchmarks) section.
 
-## `genq` vs `build_runner` + `freezed`
+# Index
+
+- [Motivation](#motivation)
+- [Index](#index)
+- [Benchmarks](#benchmarks)
+- [Getting Started](#getting-started)
+  - [1. Install](#1-install)
+  - [2. Add `genq` to your project](#2-add-genq-to-your-project)
+  - [3. Define your data classes](#3-define-your-data-classes)
+  - [4. Generate the code](#4-generate-the-code)
+- [Defining Data Classes](#defining-data-classes)
+  - [Overview](#overview)
+  - [JSON Serialization/Deserialization](#json-serializationdeserialization)
+    - [Customize JSON Serialization](#customize-json-serialization)
+      - [Custom fromJson and toJson functions](#custom-fromjson-and-tojson-functions)
+      - [Unknowns enum values](#unknowns-enum-values)
+    - [Enums](#enums)
+    - [Notes](#notes)
+  - [How?](#how)
+    - [Notes on the subset parser](#notes-on-the-subset-parser)
+  - [When should I use `genq` over `build_runner`?](#when-should-i-use-genq-over-build_runner)
+  - [Future Plans](#future-plans)
+
+# Benchmarks
 
 `build_runner` + `freezed` 🐌 | `genq` 🚀
 :-------------------------:|:-------------------------:
@@ -27,7 +57,7 @@ In this benchmark (located in `./benchmarks`), _count_ is the number of files in
 1. Never trust a benchmark you didn't falsify yourself.
 2. genq is optimized to perform one task and one task only - data class generation, whereas build_runner is built to do a lot more. Take this into account when choosing between the two.
 
-## Getting started is easy
+## Getting Started
 
 ### 1. Install
 
@@ -73,12 +103,11 @@ Run the genq command in your project directory, and you will have your desired d
 genq
 ```
 
-## Defining Data Classes
+# Defining Data Classes
 
-To define a data class, first you need to annotate your class with `@genq`. Also, you need to use the generated mixin with the name `_$<ClassName>`.
-Additionally, you need to define a factory constructor with named parameters and a redirecting constructor with the name `_<ClassName>`.
+## Overview
 
-At first, you might get errors from the IDE because the generated file is not yet created. After running `genq`, the errors should disappear.
+To define a data class, you need to annotate the class with `@genq` and provide a factory constructor with named parameters.
 
 ```dart
 import 'package:genq/genq.dart'; // <- Import genq
@@ -99,22 +128,165 @@ The generated class will have the following methods:
 - `toString`: Generate a human-readable string representation of the data class.
 - `==`: Compare two data classes for equality.
 
+## JSON Serialization/Deserialization
+
+To generate JSON serialization/deserialization code, you need to use the `@Genq(json: true)` annotation instead of `@genq`. 
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    @JsonKey(name: 'full_name')
+    required String name,
+    required int age,
+  }) = _User;
+}
+```
+
+This will generate two public functions, which you can use to serialize/deserialize the data class to/from JSON:
+
+```dart
+$UserFromJson(Map<String, dynamic> json) => /* ... */;
+$UserToJson(User value) => /* ... */;
+```
+
+### Customize JSON Serialization
+
+You can customize the generated JSON serialization/deserialization code for fields using the `@JsonKey` annotation. 
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    // Customizing the JSON key for the field 'name'. When deserializing, the value of 'full_name' will be assigned to the 'name' field.
+    @JsonKey(name: 'full_name')
+    required String name,
+    // Providing a default value for the field 'age'. If the field is not present in the JSON, the default value will be used.
+    @JsonKey(defaultValue: 99)
+    required int age,
+  }) = _User;
+}
+```
+
+#### Custom fromJson and toJson functions
+
+You can also provide custom `fromJson` and `toJson` functions for a field using the `fromJson` and `toJson` parameters of the `@JsonKey` annotation.
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+class UserName {
+  final String value;
+
+  UserName(this.value);
+
+  static UserName fromJson(String value) {
+    return UserName(value);
+  }
+
+  static UserName toJson(Custom value) {
+    return value.value;
+  }
+}
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    @JsonKey(
+      fromJson: UserName.fromJson,
+      toJson: UserName.toJson,
+    )
+    required UserName name,
+    required int age,
+  }) = _User;
+}
+```
+
+#### Unknowns enum values
+
+You can provide a value for unknown enum values using the `unknownEnumValue` parameter of the `@JsonKey` annotation.
+When deserializing and encountering an unknown value, the `unknownEnumValue` will be used instead of throwing an exception.
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@GenqJsonEnum()
+enum Role {
+  admin,
+  user,
+  unknown,
+}
+
+@Genq(json: true)
+class User with _$User {
+  factory User({
+    @JsonKey(unknownEnumValue: Role.unknown)
+    required Role role,
+  }) = _User;
+}
+```
+
+### Enums
+
+Enums are also supported for JSON serialization/deserialization. They need to be annotated with `@GenqJsonEnum`.
+
+```dart
+import 'package:genq/genq.dart';
+
+part 'user.genq.dart';
+
+@GenqJsonEnum()
+enum Role {
+  // You can annotate the enum values with @JsonValue to customize the JSON serialization/deserialization.
+  // For example, the string 'ADMIN' will get deserialized to the Role.admin value and vice versa.
+  // If you don't provide a value for @JsonValue, the enum key is used.
+  @JsonValue('ADMIN')
+  admin,
+  @JsonValue('USER')
+  user,
+}
+
+```
+
+Similary to the @Genq(json: true) annotation, this will generate two public functions, which you can use to serialize/deserialize the enum to/from JSON:
+
+```dart
+$RoleFromJson(Object json) => /* ... */;
+$RoleToJson(Role value) => /* ... */;
+```
+
+### Notes
+
+The fundamental idea behind the JSON codegen for it to be fast and efficient is to **publicly** expose the generated functions. Based on this, genq can assume for a type
+`T` that the functions `$TFromJson` and `$TToJson` are available, thus avoiding unnecessary traversal of other files.
+
 ## How?
 
 genq uses its own subset parser of the dart language and generates code directly from the parsed AST. This allows genq to generate code much faster than `build_runner`, which uses the `analyzer` package. Code generation is also done in parallel for each file, which further speeds up the process.
 
-Also, the code generator only cares about the information within the data class definition, which allows it to ignore the rest of the codebase.
-
-## Notes on the subset parser
+### Notes on the subset parser
 
 The subset parser is written for the specific structures of data classes as defined [here](#defining-data-classes). Thus, there may be parsing errors if the code does not follow the expected structure. While the parser is generally robust when encountering unparsable code, there may be cases where it fails to parse the code correctly. If you encounter such a case, please open an [issue](https://github.com/jankuss/genq/issues/new) with the code that caused the error.
 
-## Downsides of `genq`
+## When should I use `genq` over `build_runner`?
 
-- `build_runner` is extensible & pluggable and can be used for a wide variety of tasks, whereas `genq` is focused on data class generation. Freezed for example leverages this to generate JSON Serialization code using `json_serializable`.
-- `genq` is written in Go, so it does not neatly integrate with the Dart ecosystem.
+One great thing: you don't have to choose! You can use both in your project. A good guidline would be: Use `genq` for data class generation in your day-to-day development, and `build_runner` for more complex code generation tasks.
+
+If your project is sufficiently small, you might not even need `genq`. However, if you find yourself or your team spending a lot of time waiting for `build_runner` to generate code, `genq` might be a good alternative.
 
 ## Future Plans
 
-- [ ] JSON Serialization/Deserialization
+- [ ] Editor support (VSCode, IntelliJ)
 - [ ] Extensibility

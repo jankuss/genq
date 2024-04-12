@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-(cd ../../tool && go build .)
-cp ../../tool/genq .
+if [ -z "$GENQ_PATH" ]; then
+  GENQ_PATH=genq
+fi
 
-./genq
+$GENQ_PATH
 
 dart test
