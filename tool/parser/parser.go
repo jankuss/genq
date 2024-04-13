@@ -491,11 +491,11 @@ func (p *Parser) parseFormalParameterList() (GenqFormalParameterList, *ParsingEr
 }
 
 func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration, *ParsingError) {
-  // Since there can be class modifiers, we eat tokens until we find the class keyword
-  err := p.eatUntil(TOKEN_CLASS)
-  if err != nil {
-    return GenqClassDeclaration{}, err
-  }
+	// Since there can be class modifiers, we eat tokens until we find the class keyword
+	err := p.eatUntil(TOKEN_CLASS)
+	if err != nil {
+		return GenqClassDeclaration{}, err
+	}
 
 	_, err = p.eat(TOKEN_CLASS)
 	if err != nil {
