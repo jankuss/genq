@@ -76,3 +76,7 @@ func TestJsonEnumCustom(t *testing.T) {
 func TestJsonDefaultValue(t *testing.T) {
 	testGenOutput(t, "json_default_value")
 }
+
+func TestClassModifiers(t *testing.T) {
+	testGenOutput(t, "class_modifiers")
+}
