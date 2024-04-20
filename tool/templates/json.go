@@ -41,33 +41,10 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
 	}
 
-	if typeRef.Name == "String" {
-		return valueName, true
-	}
-
-	if typeRef.Name == "int" {
-		return valueName, true
-	}
-
-	if typeRef.Name == "double" {
-		return valueName, true
-	}
-
-	if typeRef.Name == "bool" {
-		return valueName, true
-	}
-
-	if typeRef.Name == "num" {
-		return valueName, true
-	}
-
-	if typeRef.Name == "List" {
-		return "List.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()", false
-	}
-
-	if typeRef.Name == "Set" {
-		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()", false
-	}
+  converter, ok := converters[typeRef.Name]
+  if ok {
+    return converter.FromJson(annotation, typeRef, valueName)
+  }
 
 	// For every other type, we call the generated ${Type}FromJson method.
 	params := []string{}
@@ -95,33 +72,10 @@ func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName stri
 		return customToJson.Value.Reference.String() + "(" + valueName + ")"
 	}
 
-	if typeRef.Name == "String" {
-		return valueName
-	}
-
-	if typeRef.Name == "int" {
-		return valueName
-	}
-
-	if typeRef.Name == "double" {
-		return valueName
-	}
-
-	if typeRef.Name == "bool" {
-		return valueName
-	}
-
-	if typeRef.Name == "num" {
-		return valueName
-	}
-
-	if typeRef.Name == "List" {
-		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toList()"
-	}
-
-	if typeRef.Name == "Set" {
-		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
-	}
+  converter, ok := converters[typeRef.Name]
+  if ok {
+    return converter.ToJson(annotation, typeRef, valueName)
+  }
 
 	// For every other type, we call the generated ${Type}ToJson method.
 	return "$" + typeRef.Name + "ToJson(" + valueName + ")"
