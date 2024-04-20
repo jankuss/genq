@@ -15,7 +15,7 @@ var converters = map[string]jsonConverter{
 	"Object":   noopConverter{},
 	"DateTime": dateTimeConverter{},
 	"BigInt":   bigIntConverter{},
-  "Uri":      uriConverter{},
+	"Uri":      uriConverter{},
 	"List":     mappableConverter{mappableType: "List", method: "toList"},
 	"Set":      mappableConverter{mappableType: "Set", method: "toSet"},
 }
@@ -75,9 +75,9 @@ type uriConverter struct {
 }
 
 func (d uriConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
-  return valueName + ".toString()"
+	return valueName + ".toString()"
 }
 
 func (d uriConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
-  return "Uri.parse(" + valueName + ")", false
+	return "Uri.parse(" + valueName + ")", false
 }

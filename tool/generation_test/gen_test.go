@@ -86,5 +86,5 @@ func TestConstFactoryPrivateConstructor(t *testing.T) {
 }
 
 func TestJsonCollections(t *testing.T) {
-  testGenOutput(t, "json_collections")
+	testGenOutput(t, "json_collections")
 }
