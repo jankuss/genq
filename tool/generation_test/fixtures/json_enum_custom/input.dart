@@ -21,8 +21,10 @@ class Account with _$Account {
   factory Account({
     required String email,
     @JsonKey(fromJson: Deez._fromJson, toJson: Deez._toJson) required Deez accountType,
+    @JsonKey(fromJson: alwaysEleven, toJson: alwaysEleven) required int age,
   }) = _Account;
 }
 
-@GenqJsonEnum()
-enum AccountType { free, premium, vip, unknown }
+int alwaysEleven(dynamic value) {
+  return 11;
+}
