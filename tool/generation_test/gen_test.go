@@ -84,3 +84,7 @@ func TestConstFactory(t *testing.T) {
 func TestConstFactoryPrivateConstructor(t *testing.T) {
 	testGenOutput(t, "const_factory_private_constructor")
 }
+
+func TestJsonCollections(t *testing.T) {
+  testGenOutput(t, "json_collections")
+}
