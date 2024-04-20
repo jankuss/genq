@@ -9,6 +9,10 @@ class User with _$User {
     required int? age,
     required bool registered,
     required Address? address,
+    required DateTime? birthday,
+    required BigInt? balance,
+    required Object? someObject,
+    required dynamic someDynamic,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);
