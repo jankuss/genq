@@ -519,10 +519,10 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 			break
 		}
 
-    isConst := false
+		isConst := false
 		if p.lookahead == TOKEN_CONST && p.currentScope == 1 {
 			_, err := p.eat(TOKEN_CONST)
-      isConst = true
+			isConst = true
 			if err != nil {
 				return GenqClassDeclaration{}, err
 			}
@@ -622,7 +622,7 @@ func (p *Parser) parseGenqConstructor(isConst bool) (GenqConstructor, *ParsingEr
 
 	return GenqConstructor{
 		ParamList: formalParams,
-    IsConst: isConst,
+		IsConst:   isConst,
 	}, nil
 }
 
