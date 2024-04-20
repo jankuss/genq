@@ -41,10 +41,10 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
 	}
 
-  converter, ok := converters[typeRef.Name]
-  if ok {
-    return converter.FromJson(annotation, typeRef, valueName)
-  }
+	converter, ok := converters[typeRef.Name]
+	if ok {
+		return converter.FromJson(annotation, typeRef, valueName)
+	}
 
 	// For every other type, we call the generated ${Type}FromJson method.
 	params := []string{}
@@ -72,10 +72,10 @@ func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName stri
 		return customToJson.Value.Reference.String() + "(" + valueName + ")"
 	}
 
-  converter, ok := converters[typeRef.Name]
-  if ok {
-    return converter.ToJson(annotation, typeRef, valueName)
-  }
+	converter, ok := converters[typeRef.Name]
+	if ok {
+		return converter.ToJson(annotation, typeRef, valueName)
+	}
 
 	// For every other type, we call the generated ${Type}ToJson method.
 	return "$" + typeRef.Name + "ToJson(" + valueName + ")"
