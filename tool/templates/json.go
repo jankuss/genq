@@ -36,6 +36,11 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valu
 }
 
 func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
+	customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
+	if customFromJson != nil && customFromJson.Value.Reference != nil {
+		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
+	}
+
 	if typeRef.Name == "String" {
 		return valueName, true
 	}
@@ -64,11 +69,6 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 		return "Set.of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()", false
 	}
 
-	customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
-	if customFromJson != nil && customFromJson.Value.Reference != nil {
-		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
-	}
-
 	// For every other type, we call the generated ${Type}FromJson method.
 	params := []string{}
 	params = append(params, valueName)
@@ -90,6 +90,11 @@ func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueN
 }
 
 func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+	customToJson := ReadAnnotationNamedParameter(annotation, "toJson")
+	if customToJson != nil && customToJson.Value.Reference != nil {
+		return customToJson.Value.Reference.String() + "(" + valueName + ")"
+	}
+
 	if typeRef.Name == "String" {
 		return valueName
 	}
@@ -116,11 +121,6 @@ func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName stri
 
 	if typeRef.Name == "Set" {
 		return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ").toSet()"
-	}
-
-	customFromJson := ReadAnnotationNamedParameter(annotation, "toJson")
-	if customFromJson != nil && customFromJson.Value.Reference != nil {
-		return customFromJson.Value.Reference.String() + "(" + valueName + ")"
 	}
 
 	// For every other type, we call the generated ${Type}ToJson method.
