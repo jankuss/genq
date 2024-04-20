@@ -80,3 +80,7 @@ func TestJsonDefaultValue(t *testing.T) {
 func TestConstFactory(t *testing.T) {
 	testGenOutput(t, "const_factory")
 }
+
+func TestConstFactoryPrivateConstructor(t *testing.T) {
+	testGenOutput(t, "const_factory_private_constructor")
+}
