@@ -519,8 +519,10 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 			break
 		}
 
+    isConst := false
 		if p.lookahead == TOKEN_CONST && p.currentScope == 1 {
 			_, err := p.eat(TOKEN_CONST)
+      isConst = true
 			if err != nil {
 				return GenqClassDeclaration{}, err
 			}
@@ -581,7 +583,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 			if p.lookahead == TOKEN_PAREN_START && cn == classIdentifier {
 				// Factory matches class name
 				// This is the chosen constructor
-				genqConstructorSignature, err = p.parseGenqConstructor()
+				genqConstructorSignature, err = p.parseGenqConstructor(isConst)
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
@@ -612,7 +614,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 	}, nil
 }
 
-func (p *Parser) parseGenqConstructor() (GenqConstructor, *ParsingError) {
+func (p *Parser) parseGenqConstructor(isConst bool) (GenqConstructor, *ParsingError) {
 	formalParams, err := p.parseFormalParameterList()
 	if err != nil {
 		return GenqConstructor{}, err
@@ -620,6 +622,7 @@ func (p *Parser) parseGenqConstructor() (GenqConstructor, *ParsingError) {
 
 	return GenqConstructor{
 		ParamList: formalParams,
+    IsConst: isConst,
 	}, nil
 }
 
