@@ -76,3 +76,11 @@ func TestJsonEnumCustom(t *testing.T) {
 func TestJsonDefaultValue(t *testing.T) {
 	testGenOutput(t, "json_default_value")
 }
+
+func TestConstFactory(t *testing.T) {
+	testGenOutput(t, "const_factory")
+}
+
+func TestConstFactoryPrivateConstructor(t *testing.T) {
+	testGenOutput(t, "const_factory_private_constructor")
+}

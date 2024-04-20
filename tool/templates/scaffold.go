@@ -35,7 +35,14 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 	}
 
 	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
-		str = append(str, indent(2, fmt.Sprintf("_%s({", classDecl.Name)))
+		var constructorDecl string
+		if classDecl.Constructor.IsConst {
+			constructorDecl = fmt.Sprintf("const _%s({", classDecl.Name)
+		} else {
+			constructorDecl = fmt.Sprintf("_%s({", classDecl.Name)
+		}
+
+		str = append(str, indent(2, constructorDecl))
 		for _, param := range classDecl.Constructor.ParamList.NamedParams {
 			if param.Required {
 				str = append(str, indent(4, fmt.Sprintf("required this.%s,", param.Name)))
@@ -50,9 +57,17 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 		}
 	} else {
 		if classDecl.HasPrivateConstructor {
-			str = append(str, indent(2, fmt.Sprintf("_%s() : super._();", classDecl.Name)))
+			if classDecl.Constructor.IsConst {
+				str = append(str, indent(2, fmt.Sprintf("const _%s() : super._();", classDecl.Name)))
+			} else {
+				str = append(str, indent(2, fmt.Sprintf("_%s() : super._();", classDecl.Name)))
+			}
 		} else {
-			str = append(str, indent(2, fmt.Sprintf("_%s();", classDecl.Name)))
+			if classDecl.Constructor.IsConst {
+				str = append(str, indent(2, fmt.Sprintf("const _%s();", classDecl.Name)))
+			} else {
+				str = append(str, indent(2, fmt.Sprintf("_%s();", classDecl.Name)))
+			}
 		}
 	}
 

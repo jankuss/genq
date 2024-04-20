@@ -51,6 +51,7 @@ type GenqIdentifier struct {
 
 type GenqConstructor struct {
 	ParamList GenqFormalParameterList
+	IsConst   bool
 }
 
 type GenqPositionalFormalParameter struct {

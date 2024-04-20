@@ -82,7 +82,7 @@ class _$ETFCopyWithImpl implements $ETFCopyWith {
 
 ETF $ETFFromJson(Map<String, dynamic> json) {
   return ETF(
-    isin: ISIN.fromJson(json['isin']) as ISIN,
+    isin: ISIN.fromJson(json['isin']),
     name: json['name'] as String,
     price: json['price'] as double,
   );
