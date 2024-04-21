@@ -59,13 +59,13 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 }
 
 func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string, requiresNonNullCast bool) string {
-  nonNullCast := ""
-  if requiresNonNullCast {
-    nonNullCast = "!";
-  }
+	nonNullCast := ""
+	if requiresNonNullCast {
+		nonNullCast = "!"
+	}
 
 	if typeRef.Optional {
-		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName + nonNullCast)
+		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName+nonNullCast)
 	} else {
 		return typeToJson(annotation, typeRef, valueName)
 	}
