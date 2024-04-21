@@ -58,9 +58,14 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")", false
 }
 
-func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueName string, requiresNonNullCast bool) string {
+  nonNullCast := ""
+  if requiresNonNullCast {
+    nonNullCast = "!";
+  }
+
 	if typeRef.Optional {
-		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName+"!")
+		return valueName + " == null ? null : " + typeToJson(annotation, typeRef, valueName + nonNullCast)
 	} else {
 		return typeToJson(annotation, typeRef, valueName)
 	}
@@ -116,7 +121,7 @@ func templateToJson(str []string, params GenqClassDeclaration) []string {
 			}
 		}
 
-		str = append(str, indent(4, fmt.Sprintf("'%s': %s,", jsonKey, typeToJsonNullable(param.Annotation, param.ParamType, "obj."+param.Name))))
+		str = append(str, indent(4, fmt.Sprintf("'%s': %s,", jsonKey, typeToJsonNullable(param.Annotation, param.ParamType, "obj."+param.Name, true))))
 	}
 	str = append(str, indent(2, fmt.Sprintf("};")))
 	str = append(str, fmt.Sprintf("}"))

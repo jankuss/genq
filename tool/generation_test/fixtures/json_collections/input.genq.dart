@@ -2,7 +2,12 @@ part of 'input.dart';
 
 mixin _$User {
   List<Address> get addressesList => throw UnimplementedError();
+  List<Address?> get addressesListNullable => throw UnimplementedError();
   Set<Address> get addressesSet => throw UnimplementedError();
+  Set<Address?> get addressesSetNullable => throw UnimplementedError();
+  Map<String, Address> get addressesMap => throw UnimplementedError();
+  Map<Uri, Address> get addressesUriMap => throw UnimplementedError();
+  Map<String, Address?> get addressesMapNullableValue => throw UnimplementedError();
 
   $UserCopyWith get copyWith => throw UnimplementedError();
 }
@@ -12,11 +17,31 @@ class _User implements User {
   final List<Address> addressesList;
 
   @override
+  final List<Address?> addressesListNullable;
+
+  @override
   final Set<Address> addressesSet;
+
+  @override
+  final Set<Address?> addressesSetNullable;
+
+  @override
+  final Map<String, Address> addressesMap;
+
+  @override
+  final Map<Uri, Address> addressesUriMap;
+
+  @override
+  final Map<String, Address?> addressesMapNullableValue;
 
   _User({
     required this.addressesList,
+    required this.addressesListNullable,
     required this.addressesSet,
+    required this.addressesSetNullable,
+    required this.addressesMap,
+    required this.addressesUriMap,
+    required this.addressesMapNullableValue,
   });
 
   @override
@@ -24,7 +49,7 @@ class _User implements User {
 
   @override
   String toString() {
-    return "User(addressesList: $addressesList, addressesSet: $addressesSet)";
+    return "User(addressesList: $addressesList, addressesListNullable: $addressesListNullable, addressesSet: $addressesSet, addressesSetNullable: $addressesSetNullable, addressesMap: $addressesMap, addressesUriMap: $addressesUriMap, addressesMapNullableValue: $addressesMapNullableValue)";
   }
 
   @override
@@ -32,7 +57,12 @@ class _User implements User {
     if (identical(this, other)) return true;
     if (other is! User) return false;
     if (!const DeepCollectionEquality().equals(other.addressesList, addressesList)) return false;
+    if (!const DeepCollectionEquality().equals(other.addressesListNullable, addressesListNullable)) return false;
     if (!const DeepCollectionEquality().equals(other.addressesSet, addressesSet)) return false;
+    if (!const DeepCollectionEquality().equals(other.addressesSetNullable, addressesSetNullable)) return false;
+    if (!const DeepCollectionEquality().equals(other.addressesMap, addressesMap)) return false;
+    if (!const DeepCollectionEquality().equals(other.addressesUriMap, addressesUriMap)) return false;
+    if (!const DeepCollectionEquality().equals(other.addressesMapNullableValue, addressesMapNullableValue)) return false;
     return true;
   }
 
@@ -41,7 +71,12 @@ class _User implements User {
     return Object.hash(
       runtimeType,
       addressesList,
+      addressesListNullable,
       addressesSet,
+      addressesSetNullable,
+      addressesMap,
+      addressesUriMap,
+      addressesMapNullableValue,
     );
   }
 }
@@ -49,7 +84,12 @@ class _User implements User {
 abstract class $UserCopyWith {
   User call({
     List<Address> addressesList,
+    List<Address?> addressesListNullable,
     Set<Address> addressesSet,
+    Set<Address?> addressesSetNullable,
+    Map<String, Address> addressesMap,
+    Map<Uri, Address> addressesUriMap,
+    Map<String, Address?> addressesMapNullableValue,
   });
 }
 
@@ -61,11 +101,21 @@ class _$UserCopyWithImpl implements $UserCopyWith {
   @override
   User call({
     Object? addressesList = genq,
+    Object? addressesListNullable = genq,
     Object? addressesSet = genq,
+    Object? addressesSetNullable = genq,
+    Object? addressesMap = genq,
+    Object? addressesUriMap = genq,
+    Object? addressesMapNullableValue = genq,
   }) {
     return User(
       addressesList: addressesList == genq ? value.addressesList : addressesList as List<Address>,
+      addressesListNullable: addressesListNullable == genq ? value.addressesListNullable : addressesListNullable as List<Address?>,
       addressesSet: addressesSet == genq ? value.addressesSet : addressesSet as Set<Address>,
+      addressesSetNullable: addressesSetNullable == genq ? value.addressesSetNullable : addressesSetNullable as Set<Address?>,
+      addressesMap: addressesMap == genq ? value.addressesMap : addressesMap as Map<String, Address>,
+      addressesUriMap: addressesUriMap == genq ? value.addressesUriMap : addressesUriMap as Map<Uri, Address>,
+      addressesMapNullableValue: addressesMapNullableValue == genq ? value.addressesMapNullableValue : addressesMapNullableValue as Map<String, Address?>,
     );
   }
 }
@@ -73,14 +123,24 @@ class _$UserCopyWithImpl implements $UserCopyWith {
 User $UserFromJson(Map<String, dynamic> json) {
   return User(
     addressesList: List.of(json['addressesList']).map((e) => $AddressFromJson(e)).toList(),
+    addressesListNullable: List.of(json['addressesListNullable']).map((e) => e == null ? null : $AddressFromJson(e)).toList(),
     addressesSet: Set.of(json['addressesSet']).map((e) => $AddressFromJson(e)).toSet(),
+    addressesSetNullable: Set.of(json['addressesSetNullable']).map((e) => e == null ? null : $AddressFromJson(e)).toSet(),
+    addressesMap: Map.of(json['addressesMap']).map((key, value) => MapEntry(key as String, $AddressFromJson(value))),
+    addressesUriMap: Map.of(json['addressesUriMap']).map((key, value) => MapEntry(Uri.parse(key), $AddressFromJson(value))),
+    addressesMapNullableValue: Map.of(json['addressesMapNullableValue']).map((key, value) => MapEntry(key as String, value == null ? null : $AddressFromJson(value))),
   );
 }
 
 Map<String, dynamic> $UserToJson(User obj) {
   return {
     'addressesList': obj.addressesList.map((e) => $AddressToJson(e)).toList(),
-    'addressesSet': obj.addressesSet.map((e) => $AddressToJson(e)).toSet(),
+    'addressesListNullable': obj.addressesListNullable.map((e) => e == null ? null : $AddressToJson(e)).toList(),
+    'addressesSet': obj.addressesSet.map((e) => $AddressToJson(e)).toList(),
+    'addressesSetNullable': obj.addressesSetNullable.map((e) => e == null ? null : $AddressToJson(e)).toList(),
+    'addressesMap': Map.of(obj.addressesMap).map((key, value) => MapEntry(key, $AddressToJson(value))),
+    'addressesUriMap': Map.of(obj.addressesUriMap).map((key, value) => MapEntry(key.toString(), $AddressToJson(value))),
+    'addressesMapNullableValue': Map.of(obj.addressesMapNullableValue).map((key, value) => MapEntry(key, value == null ? null : $AddressToJson(value))),
   };
 }
 

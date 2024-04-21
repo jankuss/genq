@@ -16,8 +16,9 @@ var converters = map[string]jsonConverter{
 	"DateTime": dateTimeConverter{},
 	"BigInt":   bigIntConverter{},
 	"Uri":      uriConverter{},
-	"List":     mappableConverter{mappableType: "List", method: "toList"},
-	"Set":      mappableConverter{mappableType: "Set", method: "toSet"},
+	"List":     mappableConverter{mappableType: "List", methodFromJson: "toList", methodToJson: "toList"},
+	"Set":      mappableConverter{mappableType: "Set", methodFromJson: "toSet", methodToJson: "toList"},
+	"Map":      mapConverter{},
 }
 
 type jsonConverter interface {
@@ -37,16 +38,17 @@ func (d noopConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType
 }
 
 type mappableConverter struct {
-	mappableType string
-	method       string
+	mappableType   string
+	methodFromJson string
+	methodToJson   string
 }
 
 func (d mappableConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
-	return valueName + ".map((e) => " + typeToJson(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ")." + d.method + "()"
+	return valueName + ".map((e) => " + typeToJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e", false) + ")." + d.methodToJson + "()"
 }
 
 func (d mappableConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
-	return d.mappableType + ".of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ")." + d.method + "()", false
+	return d.mappableType + ".of(" + valueName + ").map((e) => " + typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "e") + ")." + d.methodFromJson + "()", false
 }
 
 type dateTimeConverter struct {
@@ -80,4 +82,20 @@ func (d uriConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, v
 
 func (d uriConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
 	return "Uri.parse(" + valueName + ")", false
+}
+
+type mapConverter struct{}
+
+func (d mapConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+	keyType := typeToJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "key", false)
+	valueType := typeToJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[1], "value", false)
+
+	return "Map.of(" + valueName + ").map((key, value) => MapEntry(" + keyType + ", " + valueType + "))"
+}
+
+func (d mapConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
+	keyType := typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[0], "key")
+	valueType := typeFromJsonNullable(GenqAnnotation{}, typeRef.GenericTypes[1], "value")
+
+	return "Map.of(" + valueName + ").map((key, value) => MapEntry(" + keyType + ", " + valueType + "))", false
 }

@@ -6,7 +6,12 @@ part 'input.genq.dart';
 class User with _$User {
   factory User({
     required List<Address> addressesList,
+    required List<Address?> addressesListNullable,
     required Set<Address> addressesSet,
+    required Set<Address?> addressesSetNullable,
+    required Map<String, Address> addressesMap,
+    required Map<Uri, Address> addressesUriMap,
+    required Map<String, Address?> addressesMapNullableValue,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);
