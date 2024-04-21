@@ -5,6 +5,10 @@ mixin _$User {
   int? get age => throw UnimplementedError();
   bool get registered => throw UnimplementedError();
   Address? get address => throw UnimplementedError();
+  DateTime? get birthday => throw UnimplementedError();
+  BigInt? get balance => throw UnimplementedError();
+  Object? get someObject => throw UnimplementedError();
+  dynamic get someDynamic => throw UnimplementedError();
 
   $UserCopyWith get copyWith => throw UnimplementedError();
 }
@@ -22,11 +26,27 @@ class _User implements User {
   @override
   final Address? address;
 
+  @override
+  final DateTime? birthday;
+
+  @override
+  final BigInt? balance;
+
+  @override
+  final Object? someObject;
+
+  @override
+  final dynamic someDynamic;
+
   _User({
     required this.name,
     required this.age,
     required this.registered,
     required this.address,
+    required this.birthday,
+    required this.balance,
+    required this.someObject,
+    required this.someDynamic,
   });
 
   @override
@@ -34,7 +54,7 @@ class _User implements User {
 
   @override
   String toString() {
-    return "User(name: $name, age: $age, registered: $registered, address: $address)";
+    return "User(name: $name, age: $age, registered: $registered, address: $address, birthday: $birthday, balance: $balance, someObject: $someObject, someDynamic: $someDynamic)";
   }
 
   @override
@@ -45,6 +65,10 @@ class _User implements User {
     if (!identical(other.age, age) && other.age != age) return false;
     if (!identical(other.registered, registered) && other.registered != registered) return false;
     if (!identical(other.address, address) && other.address != address) return false;
+    if (!identical(other.birthday, birthday) && other.birthday != birthday) return false;
+    if (!identical(other.balance, balance) && other.balance != balance) return false;
+    if (!identical(other.someObject, someObject) && other.someObject != someObject) return false;
+    if (!identical(other.someDynamic, someDynamic) && other.someDynamic != someDynamic) return false;
     return true;
   }
 
@@ -56,6 +80,10 @@ class _User implements User {
       age,
       registered,
       address,
+      birthday,
+      balance,
+      someObject,
+      someDynamic,
     );
   }
 }
@@ -66,6 +94,10 @@ abstract class $UserCopyWith {
     int? age,
     bool registered,
     Address? address,
+    DateTime? birthday,
+    BigInt? balance,
+    Object? someObject,
+    dynamic someDynamic,
   });
 }
 
@@ -80,12 +112,20 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? age = genq,
     Object? registered = genq,
     Object? address = genq,
+    Object? birthday = genq,
+    Object? balance = genq,
+    Object? someObject = genq,
+    Object? someDynamic = genq,
   }) {
     return User(
       name: name == genq ? value.name : name as String,
       age: age == genq ? value.age : age as int?,
       registered: registered == genq ? value.registered : registered as bool,
       address: address == genq ? value.address : address as Address?,
+      birthday: birthday == genq ? value.birthday : birthday as DateTime?,
+      balance: balance == genq ? value.balance : balance as BigInt?,
+      someObject: someObject == genq ? value.someObject : someObject as Object?,
+      someDynamic: someDynamic == genq ? value.someDynamic : someDynamic as dynamic,
     );
   }
 }
@@ -96,6 +136,10 @@ User $UserFromJson(Map<String, dynamic> json) {
     age: json['age'] == null ? null : json['age'] as int?,
     registered: json['registered'] as bool,
     address: json['address'] == null ? null : $AddressFromJson(json['address']),
+    birthday: json['birthday'] == null ? null : DateTime.parse(json['birthday']),
+    balance: json['balance'] == null ? null : BigInt.parse(json['balance']),
+    someObject: json['someObject'] == null ? null : json['someObject'] as Object?,
+    someDynamic: json['someDynamic'] as dynamic,
   );
 }
 
@@ -105,6 +149,10 @@ Map<String, dynamic> $UserToJson(User obj) {
     'age': obj.age == null ? null : obj.age!,
     'registered': obj.registered,
     'address': obj.address == null ? null : $AddressToJson(obj.address!),
+    'birthday': obj.birthday == null ? null : obj.birthday!.toIso8601String(),
+    'balance': obj.balance == null ? null : obj.balance!.toString(),
+    'someObject': obj.someObject == null ? null : obj.someObject!,
+    'someDynamic': obj.someDynamic,
   };
 }
 
