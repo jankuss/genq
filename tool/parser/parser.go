@@ -511,7 +511,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 		return GenqClassDeclaration{}, err
 	}
 
-	var genqConstructorSignature GenqConstructor
+	var constructors []GenqConstructor
 	hasPrivateConstructor := false
 
 	for {
@@ -575,20 +575,30 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 				return GenqClassDeclaration{}, err
 			}
 
-			cn, err := p.eat(TOKEN_IDENTIFIER)
+			_, err = p.eat(TOKEN_IDENTIFIER)
 			if err != nil {
 				return GenqClassDeclaration{}, err
 			}
 
-			if p.lookahead == TOKEN_PAREN_START && cn == classIdentifier {
-				// Factory matches class name
-				// This is the chosen constructor
-				genqConstructorSignature, err = p.parseGenqConstructor(isConst)
+			if p.lookahead == TOKEN_DOT {
+				_, err = p.eat(TOKEN_DOT)
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
 
-				err := p.eatUntil(TOKEN_SEMICOLON)
+				_, err = p.eat(TOKEN_IDENTIFIER)
+				if err != nil {
+					return GenqClassDeclaration{}, err
+				}
+			}
+
+			if p.lookahead == TOKEN_PAREN_START {
+				constructor, err := p.parseGenqConstructor(isConst)
+				if err != nil {
+					return GenqClassDeclaration{}, err
+				}
+
+				err = p.eatUntil(TOKEN_SEMICOLON)
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
@@ -597,6 +607,8 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
+
+				constructors = append(constructors, constructor)
 			}
 		} else {
 			_, err := p.eat(p.lookahead)
@@ -608,7 +620,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 
 	return GenqClassDeclaration{
 		Name:                  classIdentifier,
-		Constructor:           genqConstructorSignature,
+		Constructors:          constructors,
 		HasPrivateConstructor: hasPrivateConstructor,
 		Annotation:            annotation,
 	}, nil
@@ -620,9 +632,20 @@ func (p *Parser) parseGenqConstructor(isConst bool) (GenqConstructor, *ParsingEr
 		return GenqConstructor{}, err
 	}
 
+	_, err = p.eat(TOKEN_EQUALS)
+	if err != nil {
+		return GenqConstructor{}, err
+	}
+
+	redirectTo, err := p.eat(TOKEN_IDENTIFIER)
+	if err != nil {
+		return GenqConstructor{}, err
+	}
+
 	return GenqConstructor{
-		ParamList: formalParams,
-		IsConst:   isConst,
+		ParamList:  formalParams,
+		IsConst:    isConst,
+		RedirectTo: redirectTo,
 	}, nil
 }
 

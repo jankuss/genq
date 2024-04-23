@@ -26,5 +26,6 @@
   { "type": "GENERIC_START", "regexp": "^<" },
   { "type": "GENERIC_END", "regexp": "^>" },
   { "type": "OPTIONAL", "regexp": "^\\\\?" },
+  { "type": "EQUALS", "regexp": "^\\\\=" },
   { "type": "IDENTIFIER", "regexp": "^[a-zA-Z_][a-zA-Z0-9_]*" }
 ]

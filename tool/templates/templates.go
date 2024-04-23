@@ -3,12 +3,6 @@ package templates
 import . "genq/parser"
 
 func Template(str []string, classDecl GenqClassDeclaration) []string {
-	str = templateMixin(str, classDecl)
-	str = append(str, "")
-	str = templateConstructor(str, classDecl)
-	str = append(str, "")
-	str = templateCopyWith(str, classDecl)
-
 	shouldGenerateJson := false
 	for _, param := range classDecl.Annotation.Arguments.NamedArgs {
 		if param.Name == "json" {
@@ -16,11 +10,28 @@ func Template(str []string, classDecl GenqClassDeclaration) []string {
 		}
 	}
 
-	if shouldGenerateJson {
+  var primaryConstructor GenqConstructor
+  for _, constructor := range classDecl.Constructors {
+    if constructor.Name == "" {
+      primaryConstructor = constructor
+      break
+    }
+  }
+
+	str = templateMixin(str, classDecl, primaryConstructor)
+
+	for _, constructor := range classDecl.Constructors {
 		str = append(str, "")
-		str = templateFromJson(str, classDecl)
+		str = templateConstructor(str, classDecl, constructor)
 		str = append(str, "")
-		str = templateToJson(str, classDecl)
+		str = templateCopyWith(str, classDecl, constructor)
+
+		if shouldGenerateJson {
+			str = append(str, "")
+			str = templateFromJson(str, classDecl, constructor)
+			str = append(str, "")
+			str = templateToJson(str, classDecl, constructor)
+		}
 	}
 
 	return str

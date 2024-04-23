@@ -4,7 +4,7 @@ type GenqClassDeclaration struct {
 	Name                  string
 	Annotation            GenqAnnotation
 	HasPrivateConstructor bool
-	Constructor           GenqConstructor
+	Constructors          []GenqConstructor
 }
 
 type GenqJsonEnum struct {
@@ -50,8 +50,10 @@ type GenqIdentifier struct {
 }
 
 type GenqConstructor struct {
-	ParamList GenqFormalParameterList
-	IsConst   bool
+	ParamList  GenqFormalParameterList
+	IsConst    bool
+	RedirectTo string
+	Name       string
 }
 
 type GenqPositionalFormalParameter struct {

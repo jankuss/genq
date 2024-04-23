@@ -13,9 +13,9 @@ func extendsOrImplements(classDecl GenqClassDeclaration) string {
 	}
 }
 
-func templateMixin(str []string, classDecl GenqClassDeclaration) []string {
+func templateMixin(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("mixin _$%s {", classDecl.Name))
-	for _, param := range classDecl.Constructor.ParamList.NamedParams {
+	for _, param := range constructor.ParamList.NamedParams {
 		str = append(str, indent(2, fmt.Sprintf("%s get %s => throw UnimplementedError();", param.ParamType.String(), param.Name)))
 	}
 	str = append(str, "")
@@ -25,25 +25,25 @@ func templateMixin(str []string, classDecl GenqClassDeclaration) []string {
 	return str
 }
 
-func templateConstructor(str []string, classDecl GenqClassDeclaration) []string {
+func templateConstructor(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("class _%s %s %s {", classDecl.Name, extendsOrImplements(classDecl), classDecl.Name))
 
-	for _, param := range classDecl.Constructor.ParamList.NamedParams {
+	for _, param := range constructor.ParamList.NamedParams {
 		str = append(str, indent(2, fmt.Sprintf("@override")))
 		str = append(str, indent(2, fmt.Sprintf("final %s %s;", param.ParamType.String(), param.Name)))
 		str = append(str, "")
 	}
 
-	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
+	if len(constructor.ParamList.NamedParams) > 0 {
 		var constructorDecl string
-		if classDecl.Constructor.IsConst {
+		if constructor.IsConst {
 			constructorDecl = fmt.Sprintf("const _%s({", classDecl.Name)
 		} else {
 			constructorDecl = fmt.Sprintf("_%s({", classDecl.Name)
 		}
 
 		str = append(str, indent(2, constructorDecl))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
+		for _, param := range constructor.ParamList.NamedParams {
 			if param.Required {
 				str = append(str, indent(4, fmt.Sprintf("required this.%s,", param.Name)))
 			} else {
@@ -57,13 +57,13 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 		}
 	} else {
 		if classDecl.HasPrivateConstructor {
-			if classDecl.Constructor.IsConst {
+			if constructor.IsConst {
 				str = append(str, indent(2, fmt.Sprintf("const _%s() : super._();", classDecl.Name)))
 			} else {
 				str = append(str, indent(2, fmt.Sprintf("_%s() : super._();", classDecl.Name)))
 			}
 		} else {
-			if classDecl.Constructor.IsConst {
+			if constructor.IsConst {
 				str = append(str, indent(2, fmt.Sprintf("const _%s();", classDecl.Name)))
 			} else {
 				str = append(str, indent(2, fmt.Sprintf("_%s();", classDecl.Name)))
@@ -81,8 +81,8 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 	str = append(str, indent(2, fmt.Sprintf("String toString() {")))
 
 	toStringParams := ""
-	for i, param := range classDecl.Constructor.ParamList.NamedParams {
-		if i == len(classDecl.Constructor.ParamList.NamedParams)-1 {
+	for i, param := range constructor.ParamList.NamedParams {
+		if i == len(constructor.ParamList.NamedParams)-1 {
 			toStringParams += fmt.Sprintf("%s: $%s", param.Name, param.Name)
 		} else {
 			toStringParams += fmt.Sprintf("%s: $%s, ", param.Name, param.Name)
@@ -95,17 +95,17 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 
 	str = append(str, indent(2, fmt.Sprintf("@override")))
 	str = append(str, indent(2, fmt.Sprintf("bool operator ==(Object other) {")))
-	str = templateEqualityBody(str, classDecl)
+	str = templateEqualityBody(str, classDecl, constructor)
 	str = append(str, indent(2, fmt.Sprintf("}")))
 
 	str = append(str, "")
 	str = append(str, indent(2, fmt.Sprintf("@override")))
 	str = append(str, indent(2, fmt.Sprintf("int get hashCode {")))
 
-	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
+	if len(constructor.ParamList.NamedParams) > 0 {
 		str = append(str, indent(4, fmt.Sprintf("return Object.hash(")))
 		str = append(str, indent(6, "runtimeType,"))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
+		for _, param := range constructor.ParamList.NamedParams {
 			str = append(str, indent(6, fmt.Sprintf("%s,", param.Name)))
 		}
 		str = append(str, indent(4, fmt.Sprintf(");")))
@@ -120,11 +120,11 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 	return str
 }
 
-func templateEqualityBody(str []string, classDecl GenqClassDeclaration) []string {
+func templateEqualityBody(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, indent(4, fmt.Sprintf("if (identical(this, other)) return true;")))
 	str = append(str, indent(4, fmt.Sprintf("if (other is! %s) return false;", classDecl.Name)))
 
-	for _, param := range classDecl.Constructor.ParamList.NamedParams {
+	for _, param := range constructor.ParamList.NamedParams {
 		if param.ParamType.IsCollectionType() {
 			str = append(str, indent(4, fmt.Sprintf("if (!const DeepCollectionEquality().equals(other.%s, %s)) return false;", param.Name, param.Name)))
 		} else {

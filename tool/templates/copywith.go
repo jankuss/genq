@@ -3,12 +3,12 @@ package templates
 import "fmt"
 import . "genq/parser"
 
-func templateCopyWith(str []string, classDecl GenqClassDeclaration) []string {
+func templateCopyWith(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("abstract class $%sCopyWith {", classDecl.Name))
 
-	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
+	if len(constructor.ParamList.NamedParams) > 0 {
 		str = append(str, indent(2, fmt.Sprintf("%s call({", classDecl.Name)))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
+		for _, param := range constructor.ParamList.NamedParams {
 			str = append(str, indent(4, fmt.Sprintf("%s %s,", param.ParamType.String(), param.Name)))
 		}
 		str = append(str, indent(2, fmt.Sprintf("});")))
@@ -25,15 +25,15 @@ func templateCopyWith(str []string, classDecl GenqClassDeclaration) []string {
 	str = append(str, indent(2, fmt.Sprintf("_$%sCopyWithImpl(this.value);", classDecl.Name)))
 	str = append(str, "")
 	str = append(str, indent(2, fmt.Sprintf("@override")))
-	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
+	if len(constructor.ParamList.NamedParams) > 0 {
 		str = append(str, indent(2, fmt.Sprintf("%s call({", classDecl.Name)))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
+		for _, param := range constructor.ParamList.NamedParams {
 			str = append(str, indent(4, fmt.Sprintf("Object? %s = genq,", param.Name)))
 		}
 		str = append(str, indent(2, fmt.Sprintf("}) {")))
 
 		str = append(str, indent(4, fmt.Sprintf("return %s(", classDecl.Name)))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
+		for _, param := range constructor.ParamList.NamedParams {
 			str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? value.%s : %s as %s,", param.Name, param.Name, param.Name, param.Name, param.ParamType.String())))
 		}
 		str = append(str, indent(4, fmt.Sprintf(");")))

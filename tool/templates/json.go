@@ -86,10 +86,10 @@ func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName stri
 	return "$" + typeRef.Name + "ToJson(" + valueName + ")"
 }
 
-func templateFromJson(str []string, classDecl GenqClassDeclaration) []string {
+func templateFromJson(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("%s $%sFromJson(Map<String, dynamic> json) {", classDecl.Name, classDecl.Name))
 	str = append(str, indent(2, fmt.Sprintf("return %s(", classDecl.Name)))
-	for _, param := range classDecl.Constructor.ParamList.NamedParams {
+	for _, param := range constructor.ParamList.NamedParams {
 		jsonKey := param.Name
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
@@ -108,10 +108,10 @@ func templateFromJson(str []string, classDecl GenqClassDeclaration) []string {
 	return str
 }
 
-func templateToJson(str []string, params GenqClassDeclaration) []string {
+func templateToJson(str []string, params GenqClassDeclaration, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("Map<String, dynamic> $%sToJson(%s obj) {", params.Name, params.Name))
 	str = append(str, indent(2, fmt.Sprintf("return {")))
-	for _, param := range params.Constructor.ParamList.NamedParams {
+	for _, param := range constructor.ParamList.NamedParams {
 		jsonKey := param.Name
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
