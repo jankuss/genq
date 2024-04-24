@@ -580,22 +580,33 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 				return GenqClassDeclaration{}, err
 			}
 
+      var constructorName string
 			if p.lookahead == TOKEN_DOT {
 				_, err = p.eat(TOKEN_DOT)
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
 
-				_, err = p.eat(TOKEN_IDENTIFIER)
+				constructorName, err = p.eat(TOKEN_IDENTIFIER)
 				if err != nil {
 					return GenqClassDeclaration{}, err
 				}
 			}
 
 			if p.lookahead == TOKEN_PAREN_START {
-				constructor, err := p.parseGenqConstructor(isConst)
+				constructor, err := p.parseGenqConstructor(constructorName, isConst)
 				if err != nil {
-					return GenqClassDeclaration{}, err
+          err = p.eatUntil(TOKEN_SEMICOLON)
+          if err != nil {
+            return GenqClassDeclaration{}, err
+          }
+
+          _, err = p.eat(TOKEN_SEMICOLON)
+          if err != nil {
+            return GenqClassDeclaration{}, err
+          }
+
+          continue
 				}
 
 				err = p.eatUntil(TOKEN_SEMICOLON)
@@ -626,7 +637,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 	}, nil
 }
 
-func (p *Parser) parseGenqConstructor(isConst bool) (GenqConstructor, *ParsingError) {
+func (p *Parser) parseGenqConstructor(constructorName string, isConst bool) (GenqConstructor, *ParsingError) {
 	formalParams, err := p.parseFormalParameterList()
 	if err != nil {
 		return GenqConstructor{}, err
@@ -646,6 +657,7 @@ func (p *Parser) parseGenqConstructor(isConst bool) (GenqConstructor, *ParsingEr
 		ParamList:  formalParams,
 		IsConst:    isConst,
 		RedirectTo: redirectTo,
+		Name:       constructorName,
 	}, nil
 }
 

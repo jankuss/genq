@@ -108,6 +108,7 @@ Map<String, dynamic> $UserToJson(User obj) {
   };
 }
 
+
 UserStatus $UserStatusFromJson(Object json, [UserStatus? unknownEnumValue]) {
   switch (json) {
     case "REGISTERED":

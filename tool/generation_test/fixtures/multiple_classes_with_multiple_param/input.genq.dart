@@ -90,6 +90,7 @@ class _$UserCopyWithImpl implements $UserCopyWith {
   }
 }
 
+
 mixin _$Address {
   String get street => throw UnimplementedError();
   int get zipCode => throw UnimplementedError();

@@ -156,6 +156,7 @@ Map<String, dynamic> $UserToJson(User obj) {
   };
 }
 
+
 mixin _$Address {
   String get street => throw UnimplementedError();
   String get city => throw UnimplementedError();

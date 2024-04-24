@@ -84,6 +84,7 @@ Map<String, dynamic> $AccountToJson(Account obj) {
   };
 }
 
+
 AccountType $AccountTypeFromJson(Object json, [AccountType? unknownEnumValue]) {
   switch (json) {
     case "free":
