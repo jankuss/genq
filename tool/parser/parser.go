@@ -189,7 +189,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 // - We build a string by concatenating the values of the tokens we encounter.
 // - If we encounter a token that is in the stopTokens list, we stop parsing.
 func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError) {
-	p.lexer.setMode(MODE_ONLY_PAREN)
+	p.lexer.setMode(MODE_DONT_SKIP_COMMENT)
 	defer p.lexer.setMode(MODE_DEFAULT)
 
 	code := ""
