@@ -247,7 +247,7 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 }
 
 func (p *Parser) parseInsideParen() (string, *ParsingError) {
-	p.lexer.setMode(MODE_ONLY_PAREN)
+	p.lexer.setMode(MODE_DONT_SKIP_COMMENT)
 	defer p.lexer.setMode(MODE_DEFAULT)
 
 	parenCounter := 0
