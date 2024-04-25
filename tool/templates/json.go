@@ -90,7 +90,7 @@ func templateFromJson(str []string, classDecl GenqClassDeclaration) []string {
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
 				if annotationParam.Name == "name" {
-					jsonKey = annotationParam.Value.RawValue
+					jsonKey = annotationParam.Value.AsString()
 				}
 			}
 		}
@@ -112,7 +112,7 @@ func templateToJson(str []string, params GenqClassDeclaration) []string {
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
 				if annotationParam.Name == "name" {
-					jsonKey = annotationParam.Value.RawValue
+					jsonKey = annotationParam.Value.AsString()
 				}
 			}
 		}
