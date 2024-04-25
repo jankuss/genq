@@ -193,6 +193,9 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 	defer p.lexer.setMode(MODE_DEFAULT)
 
 	code := ""
+
+  // We keep track of the encountered parentheses and curly braces to keep track of the current scope.
+  // When the stack is empty, and we encounter a stop token, we stop parsing.
 	tokenStack := []TokenType{}
 
 	for {
