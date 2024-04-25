@@ -72,4 +72,3 @@ func (t *GenqIdentifier) String() string {
 	}
 	return str
 }
-
