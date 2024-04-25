@@ -15,5 +15,5 @@ func ReadAnnotationNamedParameter(annotation GenqAnnotation, name string) *GenqN
 }
 
 func (t GenqValue) AsString() string {
-  return t.RawValue[1:len(t.RawValue)-1]
+	return t.RawValue[1 : len(t.RawValue)-1]
 }

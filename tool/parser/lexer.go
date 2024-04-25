@@ -7,7 +7,7 @@ const MODE_DEFAULT = 0
 const MODE_DONT_SKIP_WHITESPACE = 1
 
 var tokensForMode map[int][]TokenMapping = map[int][]TokenMapping{
-	MODE_DEFAULT:           TOKEN_MAPPINGS,
+	MODE_DEFAULT:              TOKEN_MAPPINGS,
 	MODE_DONT_SKIP_WHITESPACE: TOKEN_MAPPINGS,
 }
 
