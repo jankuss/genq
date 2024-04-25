@@ -189,7 +189,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 // - We build a string by concatenating the values of the tokens we encounter.
 // - If we encounter a token that is in the stopTokens list, we stop parsing.
 func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError) {
-	p.lexer.setMode(MODE_DONT_SKIP_COMMENT)
+	p.lexer.setMode(MODE_DONT_SKIP_WHITESPACE)
 	defer p.lexer.setMode(MODE_DEFAULT)
 
 	code := ""
@@ -244,37 +244,6 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 	return GenqValue{
 		RawValue: code,
 	}, nil
-}
-
-func (p *Parser) parseInsideParen() (string, *ParsingError) {
-	p.lexer.setMode(MODE_DONT_SKIP_COMMENT)
-	defer p.lexer.setMode(MODE_DEFAULT)
-
-	parenCounter := 0
-	code := ""
-
-	for {
-		if p.lookahead == TOKEN_PAREN_START {
-			parenCounter++
-		}
-
-		if p.lookahead == TOKEN_PAREN_END {
-			parenCounter--
-		}
-
-		value, err := p.eat(p.lookahead)
-		if err != nil {
-			return "", err
-		}
-
-		code = code + value
-
-		if parenCounter == 0 {
-			break
-		}
-	}
-
-	return code[1 : len(code)-1], nil
 }
 
 func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
