@@ -37,7 +37,7 @@ type GenqNamedExpression struct {
 }
 
 type GenqValue struct {
-	RawValue     string
+	RawValue string
 }
 
 type GenqIdentifier struct {

@@ -182,7 +182,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 // Our little cheat code for "parsing" expressions. Normally, we are not really interested in the
 // AST of user defined values, as we mostly just want to pass them through to the output.
 // This function can be used to parse it as a string. Feels a bit hacky, but works.
-// 
+//
 // It works as follows:
 // - We set the lexer into a special mode, where whitespaces are not skipped.
 // - We keep track of the encountered parentheses and curly braces to keep track of the current scope.
@@ -194,8 +194,8 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 
 	code := ""
 
-  // We keep track of the encountered parentheses and curly braces to keep track of the current scope.
-  // When the stack is empty, and we encounter a stop token, we stop parsing.
+	// We keep track of the encountered parentheses and curly braces to keep track of the current scope.
+	// When the stack is empty, and we encounter a stop token, we stop parsing.
 	tokenStack := []TokenType{}
 
 	for {
@@ -208,9 +208,9 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 			tokenStack = append(tokenStack, TOKEN_PAREN_START)
 		}
 
-    if cur == TOKEN_CURLY_START {
-      tokenStack = append(tokenStack, TOKEN_CURLY_START)
-    }
+		if cur == TOKEN_CURLY_START {
+			tokenStack = append(tokenStack, TOKEN_CURLY_START)
+		}
 
 		if len(tokenStack) > 0 && cur == TOKEN_PAREN_END {
 			if tokenStack[len(tokenStack)-1] == TOKEN_PAREN_START {
@@ -221,14 +221,14 @@ func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError
 			}
 		}
 
-    if len(tokenStack) > 0 && cur == TOKEN_CURLY_END {
-      if tokenStack[len(tokenStack)-1] == TOKEN_CURLY_START {
-        tokenStack = tokenStack[:len(tokenStack)-1]
-      } else {
-        err := fmt.Errorf("Unexpected token: %s (`%s`).", cur, p.lookaheadValue)
-        return GenqValue{}, p.produceError(err)
-      }
-    }
+		if len(tokenStack) > 0 && cur == TOKEN_CURLY_END {
+			if tokenStack[len(tokenStack)-1] == TOKEN_CURLY_START {
+				tokenStack = tokenStack[:len(tokenStack)-1]
+			} else {
+				err := fmt.Errorf("Unexpected token: %s (`%s`).", cur, p.lookaheadValue)
+				return GenqValue{}, p.produceError(err)
+			}
+		}
 
 		if contains(stopTokens, cur) {
 			break

@@ -3,20 +3,19 @@ package parser
 const NO_MORE_TOKENS = "NO_MORE_TOKENS"
 const UNRECOGNIZED_TOKEN = "UNRECOGNIZED_TOKEN"
 
-const MODE_DEFAULT = 0;
-const MODE_DONT_SKIP_COMMENT = 1;
-
+const MODE_DEFAULT = 0
+const MODE_DONT_SKIP_COMMENT = 1
 
 var tokensForMode map[int][]TokenMapping = map[int][]TokenMapping{
-  MODE_DEFAULT: TOKEN_MAPPINGS,
-  MODE_DONT_SKIP_COMMENT: TOKEN_MAPPINGS,
+	MODE_DEFAULT:           TOKEN_MAPPINGS,
+	MODE_DONT_SKIP_COMMENT: TOKEN_MAPPINGS,
 }
 
 type Lexer struct {
 	input            string
 	cursor           int
 	restorationPoint int
-  mode              int
+	mode             int
 }
 
 func newLexer(str string) *Lexer {
@@ -27,7 +26,7 @@ func newLexer(str string) *Lexer {
 }
 
 func (l *Lexer) setMode(mode int) {
-  l.mode = mode;
+	l.mode = mode
 }
 
 func (l *Lexer) hasMoreTokens() bool {
@@ -56,4 +55,3 @@ func (l *Lexer) nextToken() (TokenType, string) {
 	l.cursor++
 	return UNRECOGNIZED_TOKEN, unknownToken
 }
-
