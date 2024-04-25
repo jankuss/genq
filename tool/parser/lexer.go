@@ -3,10 +3,20 @@ package parser
 const NO_MORE_TOKENS = "NO_MORE_TOKENS"
 const UNRECOGNIZED_TOKEN = "UNRECOGNIZED_TOKEN"
 
+const MODE_DEFAULT = 0;
+const MODE_ONLY_PAREN = 1;
+
+
+var tokensForMode map[int][]TokenMapping = map[int][]TokenMapping{
+  MODE_DEFAULT: TOKEN_MAPPINGS,
+  MODE_ONLY_PAREN: TOKEN_MAPPINGS,
+}
+
 type Lexer struct {
 	input            string
 	cursor           int
 	restorationPoint int
+  mode              int
 }
 
 func newLexer(str string) *Lexer {
@@ -14,6 +24,10 @@ func newLexer(str string) *Lexer {
 		input:  str,
 		cursor: 0,
 	}
+}
+
+func (l *Lexer) setMode(mode int) {
+  l.mode = mode;
 }
 
 func (l *Lexer) hasMoreTokens() bool {
@@ -25,12 +39,12 @@ func (l *Lexer) nextToken() (TokenType, string) {
 		return NO_MORE_TOKENS, ""
 	}
 
-	for _, mapping := range TOKEN_MAPPINGS {
+	for _, mapping := range tokensForMode[l.mode] {
 		if mapping.regex.MatchString(l.input[l.cursor:]) {
 			str := mapping.regex.FindString(l.input[l.cursor:])
 			l.cursor += len(str)
 
-			if mapping.token == TOKEN_SKIP || mapping.token == TOKEN_SINGLE_LINE_COMMENT {
+			if l.mode == MODE_DEFAULT && (mapping.token == TOKEN_SKIP || mapping.token == TOKEN_SINGLE_LINE_COMMENT) {
 				return l.nextToken()
 			}
 
@@ -42,3 +56,4 @@ func (l *Lexer) nextToken() (TokenType, string) {
 	l.cursor++
 	return UNRECOGNIZED_TOKEN, unknownToken
 }
+

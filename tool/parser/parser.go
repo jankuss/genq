@@ -4,7 +4,6 @@ package parser
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Parser struct {
@@ -137,7 +136,10 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 	params := []GenqNamedExpression{}
 	if p.lookahead == TOKEN_PAREN_START {
 		// Annotation is an invocation
-		p.eat(TOKEN_PAREN_START)
+		_, err := p.eat(TOKEN_PAREN_START)
+		if err != nil {
+			return GenqArgumentList{}, err
+		}
 
 		for p.lookahead != TOKEN_PAREN_END {
 			p.markRestorationPoint()
@@ -149,7 +151,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 			} else {
 				p.restore()
 
-				v, err := p.parseValue()
+				v, err := p.parseRawCode(TOKEN_COMMA, TOKEN_PAREN_END, TOKEN_CURLY_END)
 				if err != nil {
 					return GenqArgumentList{}, err
 				}
@@ -165,7 +167,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 			}
 		}
 
-		_, err := p.eat(TOKEN_PAREN_END)
+		_, err = p.eat(TOKEN_PAREN_END)
 		if err != nil {
 			return GenqArgumentList{}, err
 		}
@@ -175,6 +177,101 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 		NamedArgs:      params,
 		PositionalArgs: positional,
 	}, nil
+}
+
+// Our little cheat code for "parsing" expressions. Normally, we are not really interested in the
+// AST of user defined values, as we mostly just want to pass them through to the output.
+// This function can be used to parse it as a string. Feels a bit hacky, but works.
+// 
+// It works as follows:
+// - We set the lexer into a special mode, where whitespaces are not skipped.
+// - We keep track of the encountered parentheses and curly braces to keep track of the current scope.
+// - We build a string by concatenating the values of the tokens we encounter.
+// - If we encounter a token that is in the stopTokens list, we stop parsing.
+func (p *Parser) parseRawCode(stopTokens ...TokenType) (GenqValue, *ParsingError) {
+	p.lexer.setMode(MODE_ONLY_PAREN)
+	defer p.lexer.setMode(MODE_DEFAULT)
+
+	code := ""
+	tokenStack := []TokenType{}
+
+	for {
+		if !p.lexer.hasMoreTokens() {
+			break
+		}
+
+		cur := p.lookahead
+		if cur == TOKEN_PAREN_START {
+			tokenStack = append(tokenStack, TOKEN_PAREN_START)
+		}
+
+    if cur == TOKEN_CURLY_START {
+      tokenStack = append(tokenStack, TOKEN_CURLY_START)
+    }
+
+		if len(tokenStack) > 0 && cur == TOKEN_PAREN_END {
+			if tokenStack[len(tokenStack)-1] == TOKEN_PAREN_START {
+				tokenStack = tokenStack[:len(tokenStack)-1]
+			} else {
+				err := fmt.Errorf("Unexpected token: %s (`%s`).", cur, p.lookaheadValue)
+				return GenqValue{}, p.produceError(err)
+			}
+		}
+
+    if len(tokenStack) > 0 && cur == TOKEN_CURLY_END {
+      if tokenStack[len(tokenStack)-1] == TOKEN_CURLY_START {
+        tokenStack = tokenStack[:len(tokenStack)-1]
+      } else {
+        err := fmt.Errorf("Unexpected token: %s (`%s`).", cur, p.lookaheadValue)
+        return GenqValue{}, p.produceError(err)
+      }
+    }
+
+		if contains(stopTokens, cur) {
+			break
+		} else {
+			value, err := p.eat(cur)
+			if err != nil {
+				return GenqValue{}, err
+			}
+			code = code + value
+		}
+	}
+
+	return GenqValue{
+		RawValue: code,
+	}, nil
+}
+
+func (p *Parser) parseInsideParen() (string, *ParsingError) {
+	p.lexer.setMode(MODE_ONLY_PAREN)
+	defer p.lexer.setMode(MODE_DEFAULT)
+
+	parenCounter := 0
+	code := ""
+
+	for {
+		if p.lookahead == TOKEN_PAREN_START {
+			parenCounter++
+		}
+
+		if p.lookahead == TOKEN_PAREN_END {
+			parenCounter--
+		}
+
+		value, err := p.eat(p.lookahead)
+		if err != nil {
+			return "", err
+		}
+
+		code = code + value
+
+		if parenCounter == 0 {
+			break
+		}
+	}
+
+	return code[1 : len(code)-1], nil
 }
 
 func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
@@ -211,7 +308,7 @@ func (p *Parser) parseNamedAssignment() (*GenqNamedExpression, *ParsingError) {
 		return nil, err
 	}
 
-	value, err := p.parseValue()
+	value, err := p.parseRawCode(TOKEN_COMMA, TOKEN_PAREN_END, TOKEN_CURLY_END)
 	if err != nil {
 		return nil, err
 	}
@@ -220,68 +317,6 @@ func (p *Parser) parseNamedAssignment() (*GenqNamedExpression, *ParsingError) {
 		Name:  name,
 		Value: value,
 	}, nil
-}
-
-func (p *Parser) parseValue() (GenqValue, *ParsingError) {
-	if p.lookahead == TOKEN_IDENTIFIER {
-		v, err := p.parseGenqIdentifier()
-		if err != nil {
-			return GenqValue{}, err
-		}
-
-		return GenqValue{
-			Reference: v,
-		}, nil
-	}
-
-	return p.parsePrimitive()
-}
-
-func (p *Parser) parsePrimitive() (GenqValue, *ParsingError) {
-	if p.lookahead == TOKEN_NUMBER {
-		v, err := p.eat(TOKEN_NUMBER)
-		if err != nil {
-			return GenqValue{}, err
-		}
-
-		intVal, e := strconv.Atoi(v)
-		if e != nil {
-			err := fmt.Errorf("Could not parse number: %s", v)
-			return GenqValue{}, p.produceError(err)
-		}
-
-		return GenqValue{
-			RawValue: v,
-			IntValue: intVal,
-		}, nil
-	}
-
-	if p.lookahead == TOKEN_SINGLE_STRING || p.lookahead == TOKEN_DOUBLE_STRING {
-		v, err := p.eat(p.lookahead)
-		if err != nil {
-			return GenqValue{}, err
-		}
-
-		return GenqValue{
-			RawValue:    v,
-			StringValue: v[1 : len(v)-1],
-		}, nil
-	}
-
-	if p.lookahead == TOKEN_BOOLEAN_TRUE || p.lookahead == TOKEN_BOOLEAN_FALSE {
-		v, err := p.eat(p.lookahead)
-		if err != nil {
-			return GenqValue{}, nil
-		}
-
-		return GenqValue{
-			RawValue:     v,
-			BooleanValue: v == "true",
-		}, nil
-	}
-
-	err := fmt.Errorf("Unexpected token: %s (`%s`). Expected a value.", p.lookahead, p.lookaheadValue)
-	return GenqValue{}, p.produceError(err)
 }
 
 func (p *Parser) parseGenqIdentifier() (*GenqIdentifier, *ParsingError) {

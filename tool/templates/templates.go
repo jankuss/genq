@@ -12,7 +12,7 @@ func Template(str []string, classDecl GenqClassDeclaration) []string {
 	shouldGenerateJson := false
 	for _, param := range classDecl.Annotation.Arguments.NamedArgs {
 		if param.Name == "json" {
-			shouldGenerateJson = param.Value.BooleanValue
+			shouldGenerateJson = param.Value.RawValue == "true"
 		}
 	}
 

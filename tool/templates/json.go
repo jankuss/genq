@@ -12,11 +12,7 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valu
 	defaultValueAnnotation := ReadAnnotationNamedParameter(annotation, "defaultValue")
 	defaultValue := "null"
 	if defaultValueAnnotation != nil {
-		if defaultValueAnnotation.Value.RawValue != "" {
-			defaultValue = defaultValueAnnotation.Value.RawValue
-		} else {
-			defaultValue = defaultValueAnnotation.Value.Reference.String()
-		}
+		defaultValue = defaultValueAnnotation.Value.RawValue
 	}
 
 	expr := fmt.Sprintf("%s", str)
@@ -37,8 +33,8 @@ func typeFromJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valu
 
 func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
 	customFromJson := ReadAnnotationNamedParameter(annotation, "fromJson")
-	if customFromJson != nil && customFromJson.Value.Reference != nil {
-		return customFromJson.Value.Reference.String() + "(" + valueName + ")", false
+	if customFromJson != nil && customFromJson.Value.RawValue != "" {
+		return customFromJson.Value.RawValue + "(" + valueName + ")", false
 	}
 
 	converter, ok := converters[typeRef.Name]
@@ -51,8 +47,8 @@ func typeFromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName st
 	params = append(params, valueName)
 
 	unknownEnumValue := ReadAnnotationNamedParameter(annotation, "unknownEnumValue")
-	if unknownEnumValue != nil && unknownEnumValue.Value.Reference != nil {
-		params = append(params, unknownEnumValue.Value.Reference.String())
+	if unknownEnumValue != nil && unknownEnumValue.Value.RawValue != "" {
+		params = append(params, unknownEnumValue.Value.RawValue)
 	}
 
 	return "$" + typeRef.Name + "FromJson(" + strings.Join(params, ", ") + ")", false
@@ -73,8 +69,8 @@ func typeToJsonNullable(annotation GenqAnnotation, typeRef GenqNamedType, valueN
 
 func typeToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
 	customToJson := ReadAnnotationNamedParameter(annotation, "toJson")
-	if customToJson != nil && customToJson.Value.Reference != nil {
-		return customToJson.Value.Reference.String() + "(" + valueName + ")"
+	if customToJson != nil && customToJson.Value.RawValue != "" {
+		return customToJson.Value.RawValue + "(" + valueName + ")"
 	}
 
 	converter, ok := converters[typeRef.Name]
@@ -94,7 +90,7 @@ func templateFromJson(str []string, classDecl GenqClassDeclaration) []string {
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
 				if annotationParam.Name == "name" {
-					jsonKey = annotationParam.Value.StringValue
+					jsonKey = annotationParam.Value.RawValue
 				}
 			}
 		}
@@ -116,7 +112,7 @@ func templateToJson(str []string, params GenqClassDeclaration) []string {
 		if param.Annotation.Identifier.Name == "JsonKey" {
 			for _, annotationParam := range param.Annotation.Arguments.NamedArgs {
 				if annotationParam.Name == "name" {
-					jsonKey = annotationParam.Value.StringValue
+					jsonKey = annotationParam.Value.RawValue
 				}
 			}
 		}

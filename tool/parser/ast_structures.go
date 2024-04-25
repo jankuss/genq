@@ -38,10 +38,6 @@ type GenqNamedExpression struct {
 
 type GenqValue struct {
 	RawValue     string
-	BooleanValue bool
-	StringValue  string
-	IntValue     int
-	Reference    *GenqIdentifier
 }
 
 type GenqIdentifier struct {
