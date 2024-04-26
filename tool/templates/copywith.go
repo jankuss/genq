@@ -3,7 +3,7 @@ package templates
 import "fmt"
 import . "genq/parser"
 
-func templateCopyWith(str []string, name string, constructor GenqConstructor) []string {
+func templateCopyWith(str []string, name string, valueType string, constructor GenqConstructor) []string {
 	str = append(str, fmt.Sprintf("abstract class $%sCopyWith {", name))
 
 	if len(constructor.ParamList.NamedParams) > 0 {
@@ -20,7 +20,7 @@ func templateCopyWith(str []string, name string, constructor GenqConstructor) []
 	str = append(str, "")
 
 	str = append(str, fmt.Sprintf("class _$%sCopyWithImpl implements $%sCopyWith {", name, name))
-	str = append(str, indent(2, fmt.Sprintf("final _$%s value;", name)))
+	str = append(str, indent(2, fmt.Sprintf("final %s value;", valueType)))
 	str = append(str, "")
 	str = append(str, indent(2, fmt.Sprintf("_$%sCopyWithImpl(this.value);", name)))
 	str = append(str, "")

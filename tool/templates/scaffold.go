@@ -26,7 +26,7 @@ func templateMixin(str []string, name string, constructor GenqConstructor) []str
 }
 
 func templateSubConstructor(str []string, classDecl GenqClassDeclaration, constructor GenqConstructor) []string {
-	str = append(str, fmt.Sprintf("class %s with _$%s implements _%s {", constructor.RedirectTo, constructor.RedirectTo, classDecl.Name))
+	str = append(str, fmt.Sprintf("class %s implements %s {", constructor.RedirectTo, classDecl.Name))
 
 	for _, param := range constructor.ParamList.NamedParams {
 		str = append(str, indent(2, fmt.Sprintf("@override")))

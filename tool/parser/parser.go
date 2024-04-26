@@ -580,7 +580,7 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 				return GenqClassDeclaration{}, err
 			}
 
-      var constructorName string
+			var constructorName string
 			if p.lookahead == TOKEN_DOT {
 				_, err = p.eat(TOKEN_DOT)
 				if err != nil {
@@ -596,17 +596,17 @@ func (p *Parser) parseGenqClass(annotation GenqAnnotation) (GenqClassDeclaration
 			if p.lookahead == TOKEN_PAREN_START {
 				constructor, err := p.parseGenqConstructor(constructorName, isConst)
 				if err != nil {
-          err = p.eatUntil(TOKEN_SEMICOLON)
-          if err != nil {
-            return GenqClassDeclaration{}, err
-          }
+					err = p.eatUntil(TOKEN_SEMICOLON)
+					if err != nil {
+						return GenqClassDeclaration{}, err
+					}
 
-          _, err = p.eat(TOKEN_SEMICOLON)
-          if err != nil {
-            return GenqClassDeclaration{}, err
-          }
+					_, err = p.eat(TOKEN_SEMICOLON)
+					if err != nil {
+						return GenqClassDeclaration{}, err
+					}
 
-          continue
+					continue
 				}
 
 				err = p.eatUntil(TOKEN_SEMICOLON)

@@ -13,37 +13,48 @@ func Template(str []string, classDecl GenqClassDeclaration) []string {
 	}
 
 	var primaryConstructor GenqConstructor
+	var hasPrimaryConstructor bool
 	for _, constructor := range classDecl.Constructors {
 		if constructor.Name == "" {
 			primaryConstructor = constructor
+			hasPrimaryConstructor = true
 			break
 		}
 	}
 
-	str = templateMixin(str, classDecl.Name, primaryConstructor)
-	str = append(str, "")
-	str = templateConstructor(str, classDecl, primaryConstructor)
-	str = append(str, "")
-	str = templateCopyWith(str, classDecl.Name, primaryConstructor)
-
-	if shouldGenerateJson {
+	if hasPrimaryConstructor {
+		str = templateMixin(str, classDecl.Name, primaryConstructor)
 		str = append(str, "")
-		str = templateFromJson(str, classDecl, primaryConstructor)
+		str = templateConstructor(str, classDecl, primaryConstructor)
 		str = append(str, "")
-		str = templateToJson(str, classDecl, primaryConstructor)
-	}
+		str = templateCopyWith(str, classDecl.Name, "_$"+classDecl.Name, primaryConstructor)
 
-	// Create empty mixin
-	str = append(str, "")
-	for _, constructor := range classDecl.Constructors {
-		if constructor.Name != "" {
-			str = templateMixin(str, constructor.RedirectTo, constructor)
+		if shouldGenerateJson {
 			str = append(str, "")
-			str = templateSubConstructor(str, classDecl, constructor)
+			str = templateFromJson(str, classDecl, primaryConstructor)
 			str = append(str, "")
-			str = templateCopyWith(str, constructor.RedirectTo, constructor)
+			str = templateToJson(str, classDecl, primaryConstructor)
 		}
+	} else {
+		str = append(str, "mixin _$"+classDecl.Name+" {")
+		str = append(str, indent(2, "dynamic get copyWith => throw UnimplementedError();"))
+		str = append(str, "}")
+		str = append(str, "")
 
+		for _, constructor := range classDecl.Constructors {
+			if constructor.Name != "" {
+				str = templateSubConstructor(str, classDecl, constructor)
+				str = append(str, "")
+				str = templateCopyWith(str, constructor.RedirectTo, constructor.RedirectTo, constructor)
+
+				if shouldGenerateJson {
+					str = append(str, "")
+					str = templateFromJson(str, classDecl, constructor)
+					str = append(str, "")
+					str = templateToJson(str, classDecl, constructor)
+				}
+			}
+		}
 	}
 
 	return str
