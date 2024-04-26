@@ -35,6 +35,8 @@ func Template(str []string, classDecl GenqClassDeclaration) []string {
 			str = append(str, "")
 			str = templateToJson(str, classDecl, primaryConstructor)
 		}
+
+		str = append(str, "")
 	} else {
 		str = append(str, "mixin _$"+classDecl.Name+" {")
 		str = append(str, indent(2, "dynamic get copyWith => throw UnimplementedError();"))
@@ -48,10 +50,10 @@ func Template(str []string, classDecl GenqClassDeclaration) []string {
 				str = templateCopyWith(str, constructor.RedirectTo, constructor.RedirectTo, constructor)
 
 				if shouldGenerateJson {
-					str = append(str, "")
 					str = templateFromJson(str, classDecl, constructor)
 					str = append(str, "")
 					str = templateToJson(str, classDecl, constructor)
+          str = append(str, "")
 				}
 			}
 		}

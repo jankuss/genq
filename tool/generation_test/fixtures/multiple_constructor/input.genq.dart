@@ -1,55 +1,10 @@
 part of 'input.dart';
 
 mixin _$SomeState {
-
-  $SomeStateCopyWith get copyWith => throw UnimplementedError();
+  dynamic get copyWith => throw UnimplementedError();
 }
 
-class _SomeState implements SomeState {
-  _SomeState();
-
-  @override
-  $SomeStateCopyWith get copyWith => _$SomeStateCopyWithImpl(this);
-
-  @override
-  String toString() {
-    return "SomeState()";
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! SomeState) return false;
-    return true;
-  }
-
-  @override
-  int get hashCode {
-    return runtimeType.hashCode;
-  }
-}
-
-abstract class $SomeStateCopyWith {
-  SomeState call();
-}
-
-class _$SomeStateCopyWithImpl implements $SomeStateCopyWith {
-  final _$SomeState value;
-
-  _$SomeStateCopyWithImpl(this.value);
-
-  @override
-  SomeState call() {
-    return SomeState();
-  }
-}
-
-mixin _$Initial {
-
-  $InitialCopyWith get copyWith => throw UnimplementedError();
-}
-
-class Initial with _$Initial implements _SomeState {
+class Initial implements SomeState {
   const Initial();
 
   @override
@@ -78,7 +33,7 @@ abstract class $InitialCopyWith {
 }
 
 class _$InitialCopyWithImpl implements $InitialCopyWith {
-  final _$Initial value;
+  final Initial value;
 
   _$InitialCopyWithImpl(this.value);
 
@@ -87,12 +42,7 @@ class _$InitialCopyWithImpl implements $InitialCopyWith {
     return Initial();
   }
 }
-mixin _$Loading {
-
-  $LoadingCopyWith get copyWith => throw UnimplementedError();
-}
-
-class Loading with _$Loading implements _SomeState {
+class Loading implements SomeState {
   const Loading();
 
   @override
@@ -121,7 +71,7 @@ abstract class $LoadingCopyWith {
 }
 
 class _$LoadingCopyWithImpl implements $LoadingCopyWith {
-  final _$Loading value;
+  final Loading value;
 
   _$LoadingCopyWithImpl(this.value);
 
@@ -130,14 +80,7 @@ class _$LoadingCopyWithImpl implements $LoadingCopyWith {
     return Loading();
   }
 }
-mixin _$Loaded {
-  String get data => throw UnimplementedError();
-
-  $LoadedCopyWith get copyWith => throw UnimplementedError();
-}
-
-class Loaded with _$Loaded implements _SomeState {
-  @override
+class Loaded implements SomeState {
   final String data;
 
   const Loaded({
@@ -176,7 +119,7 @@ abstract class $LoadedCopyWith {
 }
 
 class _$LoadedCopyWithImpl implements $LoadedCopyWith {
-  final _$Loaded value;
+  final Loaded value;
 
   _$LoadedCopyWithImpl(this.value);
 
@@ -189,14 +132,7 @@ class _$LoadedCopyWithImpl implements $LoadedCopyWith {
     );
   }
 }
-mixin _$Error {
-  String get message => throw UnimplementedError();
-
-  $ErrorCopyWith get copyWith => throw UnimplementedError();
-}
-
-class Error with _$Error implements _SomeState {
-  @override
+class Error implements SomeState {
   final String message;
 
   const Error({
@@ -235,7 +171,7 @@ abstract class $ErrorCopyWith {
 }
 
 class _$ErrorCopyWithImpl implements $ErrorCopyWith {
-  final _$Error value;
+  final Error value;
 
   _$ErrorCopyWithImpl(this.value);
 

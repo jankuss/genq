@@ -29,7 +29,6 @@ func templateSubConstructor(str []string, classDecl GenqClassDeclaration, constr
 	str = append(str, fmt.Sprintf("class %s implements %s {", constructor.RedirectTo, classDecl.Name))
 
 	for _, param := range constructor.ParamList.NamedParams {
-		str = append(str, indent(2, fmt.Sprintf("@override")))
 		str = append(str, indent(2, fmt.Sprintf("final %s %s;", param.ParamType.String(), param.Name)))
 		str = append(str, "")
 	}
