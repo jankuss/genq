@@ -34,7 +34,7 @@ func (l *Lexer) nextToken() (TokenType, string) {
 		if mapping.regex.MatchString(remaining) {
 			checkStr := mapping.regex.FindString(remaining)
 
-			if bestMatchIndex == -1 || len(TOKEN_MAPPINGS[bestMatchIndex].regex.FindString(remaining)) < len(checkStr) {
+			if bestMatchIndex == -1 || len(bestMatchStr) < len(checkStr) {
 				bestMatchIndex = i
 				bestMatchStr = checkStr
 			}
