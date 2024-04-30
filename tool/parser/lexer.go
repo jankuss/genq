@@ -31,8 +31,9 @@ func (l *Lexer) nextToken() (TokenType, string) {
 	remaining := l.input[l.cursor:]
 
 	for i, mapping := range TOKEN_MAPPINGS {
-		if mapping.regex.MatchString(remaining) {
-			checkStr := mapping.regex.FindString(remaining)
+		match := mapping.regex.FindStringIndex(remaining)
+		if match != nil {
+			checkStr := remaining[match[0]:match[1]]
 
 			if bestMatchIndex == -1 || len(bestMatchStr) < len(checkStr) {
 				bestMatchIndex = i
