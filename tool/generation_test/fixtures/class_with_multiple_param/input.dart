@@ -8,5 +8,7 @@ class User with _$User {
     required String name,
     required int? age,
     required bool registered,
+    required String enumReservedName,
+    required String classReservedName,
   }) = _User;
 }
