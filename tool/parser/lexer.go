@@ -25,17 +25,32 @@ func (l *Lexer) nextToken() (TokenType, string) {
 		return NO_MORE_TOKENS, ""
 	}
 
-	for _, mapping := range TOKEN_MAPPINGS {
-		if mapping.regex.MatchString(l.input[l.cursor:]) {
-			str := mapping.regex.FindString(l.input[l.cursor:])
-			l.cursor += len(str)
+	var bestMatchIndex int = -1
+	var bestMatchStr string
 
-			if mapping.token == TOKEN_SKIP || mapping.token == TOKEN_SINGLE_LINE_COMMENT {
-				return l.nextToken()
+	remaining := l.input[l.cursor:]
+
+	for i, mapping := range TOKEN_MAPPINGS {
+		match := mapping.regex.FindStringIndex(remaining)
+		if match != nil {
+			checkStr := remaining[match[0]:match[1]]
+
+			if bestMatchIndex == -1 || len(bestMatchStr) < len(checkStr) {
+				bestMatchIndex = i
+				bestMatchStr = checkStr
 			}
-
-			return mapping.token, str
 		}
+	}
+
+	if bestMatchIndex != -1 {
+		bestMatch := TOKEN_MAPPINGS[bestMatchIndex]
+		l.cursor += len(bestMatchStr)
+
+		if bestMatch.token == TOKEN_SKIP || bestMatch.token == TOKEN_SINGLE_LINE_COMMENT {
+			return l.nextToken()
+		}
+
+		return bestMatch.token, bestMatchStr
 	}
 
 	unknownToken := l.input[l.cursor : l.cursor+1]
