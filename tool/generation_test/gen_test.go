@@ -92,3 +92,7 @@ func TestJsonCollections(t *testing.T) {
 func TestSealedClasses(t *testing.T) {
 	testGenOutput(t, "sealed_classes")
 }
+
+func TestManyParam(t *testing.T) {
+	testGenOutput(t, "many_param")
+}
