@@ -30,22 +30,22 @@ type doubleConverter struct {
 }
 
 func (d doubleConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
-  return valueName
+	return valueName
 }
 
 func (d doubleConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
-  return "(" + valueName + " as num).toDouble()", false
+	return "(" + valueName + " as num).toDouble()", false
 }
 
 type intConverter struct {
 }
 
 func (d intConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
-  return valueName
+	return valueName
 }
 
 func (d intConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
-  return "(" + valueName + " as num).toInt()", false
+	return "(" + valueName + " as num).toInt()", false
 }
 
 type noopConverter struct {
