@@ -103,12 +103,24 @@ func templateConstructor(str []string, classDecl GenqClassDeclaration) []string 
 	str = append(str, indent(2, fmt.Sprintf("int get hashCode {")))
 
 	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
-		str = append(str, indent(4, fmt.Sprintf("return Object.hash(")))
-		str = append(str, indent(6, "runtimeType,"))
-		for _, param := range classDecl.Constructor.ParamList.NamedParams {
-			str = append(str, indent(6, fmt.Sprintf("%s,", param.Name)))
+		// The +1 is for the runtimeType
+		totalParamCount := len(classDecl.Constructor.ParamList.NamedParams) + 1
+		if totalParamCount > 20 {
+			str = append(str, indent(4, fmt.Sprintf("return Object.hashAll([")))
+			str = append(str, indent(6, "runtimeType,"))
+			for _, param := range classDecl.Constructor.ParamList.NamedParams {
+				str = append(str, indent(6, fmt.Sprintf("%s,", param.Name)))
+			}
+			str = append(str, indent(4, fmt.Sprintf("]);")))
+		} else {
+			str = append(str, indent(4, fmt.Sprintf("return Object.hash(")))
+			str = append(str, indent(6, "runtimeType,"))
+			for _, param := range classDecl.Constructor.ParamList.NamedParams {
+				str = append(str, indent(6, fmt.Sprintf("%s,", param.Name)))
+			}
+			str = append(str, indent(4, fmt.Sprintf(");")))
 		}
-		str = append(str, indent(4, fmt.Sprintf(");")))
+
 	} else {
 		str = append(str, indent(4, fmt.Sprintf("return runtimeType.hashCode;")))
 	}
