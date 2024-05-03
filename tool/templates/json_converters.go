@@ -7,8 +7,8 @@ import (
 // map of all converters per type
 var converters = map[string]jsonConverter{
 	"String":   noopConverter{},
-	"int":      noopConverter{},
-	"double":   noopConverter{},
+	"int":      intConverter{},
+	"double":   doubleConverter{},
 	"bool":     noopConverter{},
 	"num":      noopConverter{},
 	"dynamic":  noopConverter{},
@@ -24,6 +24,28 @@ var converters = map[string]jsonConverter{
 type jsonConverter interface {
 	ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string
 	FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool)
+}
+
+type doubleConverter struct {
+}
+
+func (d doubleConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+  return valueName
+}
+
+func (d doubleConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
+  return "(" + valueName + " as num).toDouble()", false
+}
+
+type intConverter struct {
+}
+
+func (d intConverter) ToJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) string {
+  return valueName
+}
+
+func (d intConverter) FromJson(annotation GenqAnnotation, typeRef GenqNamedType, valueName string) (string, bool) {
+  return "(" + valueName + " as num).toInt()", false
 }
 
 type noopConverter struct {
