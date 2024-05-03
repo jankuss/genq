@@ -13,6 +13,8 @@ class User with _$User {
     required BigInt? balance,
     required Object? someObject,
     required dynamic someDynamic,
+    required double someDoubleValue,
+    required double? someDoubleValueNullable,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => $UserFromJson(json);

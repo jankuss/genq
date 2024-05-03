@@ -84,7 +84,7 @@ ETF $ETFFromJson(Map<String, dynamic> json) {
   return ETF(
     isin: ISIN.fromJson(json['isin']),
     name: json['name'] as String,
-    price: json['price'] as double,
+    price: (json['price'] as num).toDouble(),
   );
 }
 

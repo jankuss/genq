@@ -9,6 +9,8 @@ mixin _$User {
   BigInt? get balance => throw UnimplementedError();
   Object? get someObject => throw UnimplementedError();
   dynamic get someDynamic => throw UnimplementedError();
+  double get someDoubleValue => throw UnimplementedError();
+  double? get someDoubleValueNullable => throw UnimplementedError();
 
   $UserCopyWith get copyWith => throw UnimplementedError();
 }
@@ -38,6 +40,12 @@ class _User implements User {
   @override
   final dynamic someDynamic;
 
+  @override
+  final double someDoubleValue;
+
+  @override
+  final double? someDoubleValueNullable;
+
   _User({
     required this.name,
     required this.age,
@@ -47,6 +55,8 @@ class _User implements User {
     required this.balance,
     required this.someObject,
     required this.someDynamic,
+    required this.someDoubleValue,
+    required this.someDoubleValueNullable,
   });
 
   @override
@@ -54,7 +64,7 @@ class _User implements User {
 
   @override
   String toString() {
-    return "User(name: $name, age: $age, registered: $registered, address: $address, birthday: $birthday, balance: $balance, someObject: $someObject, someDynamic: $someDynamic)";
+    return "User(name: $name, age: $age, registered: $registered, address: $address, birthday: $birthday, balance: $balance, someObject: $someObject, someDynamic: $someDynamic, someDoubleValue: $someDoubleValue, someDoubleValueNullable: $someDoubleValueNullable)";
   }
 
   @override
@@ -69,6 +79,8 @@ class _User implements User {
     if (!identical(other.balance, balance) && other.balance != balance) return false;
     if (!identical(other.someObject, someObject) && other.someObject != someObject) return false;
     if (!identical(other.someDynamic, someDynamic) && other.someDynamic != someDynamic) return false;
+    if (!identical(other.someDoubleValue, someDoubleValue) && other.someDoubleValue != someDoubleValue) return false;
+    if (!identical(other.someDoubleValueNullable, someDoubleValueNullable) && other.someDoubleValueNullable != someDoubleValueNullable) return false;
     return true;
   }
 
@@ -84,6 +96,8 @@ class _User implements User {
       balance,
       someObject,
       someDynamic,
+      someDoubleValue,
+      someDoubleValueNullable,
     );
   }
 }
@@ -98,6 +112,8 @@ abstract class $UserCopyWith {
     BigInt? balance,
     Object? someObject,
     dynamic someDynamic,
+    double someDoubleValue,
+    double? someDoubleValueNullable,
   });
 }
 
@@ -116,6 +132,8 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? balance = genq,
     Object? someObject = genq,
     Object? someDynamic = genq,
+    Object? someDoubleValue = genq,
+    Object? someDoubleValueNullable = genq,
   }) {
     return User(
       name: name == genq ? value.name : name as String,
@@ -126,6 +144,8 @@ class _$UserCopyWithImpl implements $UserCopyWith {
       balance: balance == genq ? value.balance : balance as BigInt?,
       someObject: someObject == genq ? value.someObject : someObject as Object?,
       someDynamic: someDynamic == genq ? value.someDynamic : someDynamic as dynamic,
+      someDoubleValue: someDoubleValue == genq ? value.someDoubleValue : someDoubleValue as double,
+      someDoubleValueNullable: someDoubleValueNullable == genq ? value.someDoubleValueNullable : someDoubleValueNullable as double?,
     );
   }
 }
@@ -133,13 +153,15 @@ class _$UserCopyWithImpl implements $UserCopyWith {
 User $UserFromJson(Map<String, dynamic> json) {
   return User(
     name: json['full_name'] as String,
-    age: json['age'] == null ? null : json['age'] as int?,
+    age: json['age'] == null ? null : (json['age'] as num).toInt(),
     registered: json['registered'] as bool,
     address: json['address'] == null ? null : $AddressFromJson(json['address']),
     birthday: json['birthday'] == null ? null : DateTime.parse(json['birthday']),
     balance: json['balance'] == null ? null : BigInt.parse(json['balance']),
     someObject: json['someObject'] == null ? null : json['someObject'] as Object?,
     someDynamic: json['someDynamic'] as dynamic,
+    someDoubleValue: (json['someDoubleValue'] as num).toDouble(),
+    someDoubleValueNullable: json['someDoubleValueNullable'] == null ? null : (json['someDoubleValueNullable'] as num).toDouble(),
   );
 }
 
@@ -153,6 +175,8 @@ Map<String, dynamic> $UserToJson(User obj) {
     'balance': obj.balance == null ? null : obj.balance!.toString(),
     'someObject': obj.someObject == null ? null : obj.someObject!,
     'someDynamic': obj.someDynamic,
+    'someDoubleValue': obj.someDoubleValue,
+    'someDoubleValueNullable': obj.someDoubleValueNullable == null ? null : obj.someDoubleValueNullable!,
   };
 }
 
