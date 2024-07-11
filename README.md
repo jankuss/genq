@@ -194,7 +194,7 @@ class UserName {
     return UserName(value);
   }
 
-  static String toJson(Custom value) {
+  static String toJson(UserName value) {
     return value.value;
   }
 }
