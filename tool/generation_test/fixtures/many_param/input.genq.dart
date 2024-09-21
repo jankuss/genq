@@ -198,9 +198,9 @@ abstract class $ManyParamsCopyWith {
 }
 
 class _$ManyParamsCopyWithImpl implements $ManyParamsCopyWith {
-  final _$ManyParams value;
+  final _$ManyParams __value;
 
-  _$ManyParamsCopyWithImpl(this.value);
+  _$ManyParamsCopyWithImpl(this.__value);
 
   @override
   ManyParams call({
@@ -226,26 +226,26 @@ class _$ManyParamsCopyWithImpl implements $ManyParamsCopyWith {
     Object? t = genq,
   }) {
     return ManyParams(
-      a: a == genq ? value.a : a as int,
-      b: b == genq ? value.b : b as int,
-      c: c == genq ? value.c : c as int,
-      d: d == genq ? value.d : d as int,
-      e: e == genq ? value.e : e as int,
-      f: f == genq ? value.f : f as int,
-      g: g == genq ? value.g : g as int,
-      h: h == genq ? value.h : h as int,
-      i: i == genq ? value.i : i as int,
-      j: j == genq ? value.j : j as int,
-      k: k == genq ? value.k : k as int,
-      l: l == genq ? value.l : l as int,
-      m: m == genq ? value.m : m as int,
-      n: n == genq ? value.n : n as int,
-      o: o == genq ? value.o : o as int,
-      p: p == genq ? value.p : p as int,
-      q: q == genq ? value.q : q as int,
-      r: r == genq ? value.r : r as int,
-      s: s == genq ? value.s : s as int,
-      t: t == genq ? value.t : t as int,
+      a: a == genq ? __value.a : a as int,
+      b: b == genq ? __value.b : b as int,
+      c: c == genq ? __value.c : c as int,
+      d: d == genq ? __value.d : d as int,
+      e: e == genq ? __value.e : e as int,
+      f: f == genq ? __value.f : f as int,
+      g: g == genq ? __value.g : g as int,
+      h: h == genq ? __value.h : h as int,
+      i: i == genq ? __value.i : i as int,
+      j: j == genq ? __value.j : j as int,
+      k: k == genq ? __value.k : k as int,
+      l: l == genq ? __value.l : l as int,
+      m: m == genq ? __value.m : m as int,
+      n: n == genq ? __value.n : n as int,
+      o: o == genq ? __value.o : o as int,
+      p: p == genq ? __value.p : p as int,
+      q: q == genq ? __value.q : q as int,
+      r: r == genq ? __value.r : r as int,
+      s: s == genq ? __value.s : s as int,
+      t: t == genq ? __value.t : t as int,
     );
   }
 }

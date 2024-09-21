@@ -62,9 +62,9 @@ abstract class $ETFCopyWith {
 }
 
 class _$ETFCopyWithImpl implements $ETFCopyWith {
-  final _$ETF value;
+  final _$ETF __value;
 
-  _$ETFCopyWithImpl(this.value);
+  _$ETFCopyWithImpl(this.__value);
 
   @override
   ETF call({
@@ -73,9 +73,9 @@ class _$ETFCopyWithImpl implements $ETFCopyWith {
     Object? price = genq,
   }) {
     return ETF(
-      isin: isin == genq ? value.isin : isin as ISIN,
-      name: name == genq ? value.name : name as String,
-      price: price == genq ? value.price : price as double,
+      isin: isin == genq ? __value.isin : isin as ISIN,
+      name: name == genq ? __value.name : name as String,
+      price: price == genq ? __value.price : price as double,
     );
   }
 }

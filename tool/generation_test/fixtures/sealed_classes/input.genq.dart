@@ -34,9 +34,10 @@ abstract class $LoadingStateCopyWith {
 }
 
 class _$LoadingStateCopyWithImpl implements $LoadingStateCopyWith {
-  final _$LoadingState value;
+  // ignore: unused_field
+  final _$LoadingState __value;
 
-  _$LoadingStateCopyWithImpl(this.value);
+  _$LoadingStateCopyWithImpl(this.__value);
 
   @override
   LoadingState call() {
@@ -98,9 +99,9 @@ abstract class $SuccessStateCopyWith {
 }
 
 class _$SuccessStateCopyWithImpl implements $SuccessStateCopyWith {
-  final _$SuccessState value;
+  final _$SuccessState __value;
 
-  _$SuccessStateCopyWithImpl(this.value);
+  _$SuccessStateCopyWithImpl(this.__value);
 
   @override
   SuccessState call({
@@ -108,8 +109,8 @@ class _$SuccessStateCopyWithImpl implements $SuccessStateCopyWith {
     Object? age = genq,
   }) {
     return SuccessState(
-      name: name == genq ? value.name : name as String,
-      age: age == genq ? value.age : age as int,
+      name: name == genq ? __value.name : name as String,
+      age: age == genq ? __value.age : age as int,
     );
   }
 }

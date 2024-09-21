@@ -20,9 +20,12 @@ func templateCopyWith(str []string, classDecl GenqClassDeclaration) []string {
 	str = append(str, "")
 
 	str = append(str, fmt.Sprintf("class _$%sCopyWithImpl implements $%sCopyWith {", classDecl.Name, classDecl.Name))
-	str = append(str, indent(2, fmt.Sprintf("final _$%s value;", classDecl.Name)))
+	if len(classDecl.Constructor.ParamList.NamedParams)+len(classDecl.Constructor.ParamList.PositionalParams) == 0 {
+		str = append(str, indent(2, "// ignore: unused_field"))
+	}
+	str = append(str, indent(2, fmt.Sprintf("final _$%s __value;", classDecl.Name)))
 	str = append(str, "")
-	str = append(str, indent(2, fmt.Sprintf("_$%sCopyWithImpl(this.value);", classDecl.Name)))
+	str = append(str, indent(2, fmt.Sprintf("_$%sCopyWithImpl(this.__value);", classDecl.Name)))
 	str = append(str, "")
 	str = append(str, indent(2, fmt.Sprintf("@override")))
 	if len(classDecl.Constructor.ParamList.NamedParams) > 0 {
@@ -34,7 +37,7 @@ func templateCopyWith(str []string, classDecl GenqClassDeclaration) []string {
 
 		str = append(str, indent(4, fmt.Sprintf("return %s(", classDecl.Name)))
 		for _, param := range classDecl.Constructor.ParamList.NamedParams {
-			str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? value.%s : %s as %s,", param.Name, param.Name, param.Name, param.Name, param.ParamType.String())))
+			str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? __value.%s : %s as %s,", param.Name, param.Name, param.Name, param.Name, param.ParamType.String())))
 		}
 		str = append(str, indent(4, fmt.Sprintf(");")))
 

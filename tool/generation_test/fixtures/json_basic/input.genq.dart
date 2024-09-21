@@ -118,9 +118,9 @@ abstract class $UserCopyWith {
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
@@ -136,16 +136,16 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? someDoubleValueNullable = genq,
   }) {
     return User(
-      name: name == genq ? value.name : name as String,
-      age: age == genq ? value.age : age as int?,
-      registered: registered == genq ? value.registered : registered as bool,
-      address: address == genq ? value.address : address as Address?,
-      birthday: birthday == genq ? value.birthday : birthday as DateTime?,
-      balance: balance == genq ? value.balance : balance as BigInt?,
-      someObject: someObject == genq ? value.someObject : someObject as Object?,
-      someDynamic: someDynamic == genq ? value.someDynamic : someDynamic as dynamic,
-      someDoubleValue: someDoubleValue == genq ? value.someDoubleValue : someDoubleValue as double,
-      someDoubleValueNullable: someDoubleValueNullable == genq ? value.someDoubleValueNullable : someDoubleValueNullable as double?,
+      name: name == genq ? __value.name : name as String,
+      age: age == genq ? __value.age : age as int?,
+      registered: registered == genq ? __value.registered : registered as bool,
+      address: address == genq ? __value.address : address as Address?,
+      birthday: birthday == genq ? __value.birthday : birthday as DateTime?,
+      balance: balance == genq ? __value.balance : balance as BigInt?,
+      someObject: someObject == genq ? __value.someObject : someObject as Object?,
+      someDynamic: someDynamic == genq ? __value.someDynamic : someDynamic as dynamic,
+      someDoubleValue: someDoubleValue == genq ? __value.someDoubleValue : someDoubleValue as double,
+      someDoubleValueNullable: someDoubleValueNullable == genq ? __value.someDoubleValueNullable : someDoubleValueNullable as double?,
     );
   }
 }
@@ -250,9 +250,9 @@ abstract class $AddressCopyWith {
 }
 
 class _$AddressCopyWithImpl implements $AddressCopyWith {
-  final _$Address value;
+  final _$Address __value;
 
-  _$AddressCopyWithImpl(this.value);
+  _$AddressCopyWithImpl(this.__value);
 
   @override
   Address call({
@@ -262,10 +262,10 @@ class _$AddressCopyWithImpl implements $AddressCopyWith {
     Object? zip = genq,
   }) {
     return Address(
-      street: street == genq ? value.street : street as String,
-      city: city == genq ? value.city : city as String,
-      state: state == genq ? value.state : state as String,
-      zip: zip == genq ? value.zip : zip as String,
+      street: street == genq ? __value.street : street as String,
+      city: city == genq ? __value.city : city as String,
+      state: state == genq ? __value.state : state as String,
+      zip: zip == genq ? __value.zip : zip as String,
     );
   }
 }

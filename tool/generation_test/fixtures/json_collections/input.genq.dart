@@ -94,9 +94,9 @@ abstract class $UserCopyWith {
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
@@ -109,13 +109,13 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? addressesMapNullableValue = genq,
   }) {
     return User(
-      addressesList: addressesList == genq ? value.addressesList : addressesList as List<Address>,
-      addressesListNullable: addressesListNullable == genq ? value.addressesListNullable : addressesListNullable as List<Address?>,
-      addressesSet: addressesSet == genq ? value.addressesSet : addressesSet as Set<Address>,
-      addressesSetNullable: addressesSetNullable == genq ? value.addressesSetNullable : addressesSetNullable as Set<Address?>,
-      addressesMap: addressesMap == genq ? value.addressesMap : addressesMap as Map<String, Address>,
-      addressesUriMap: addressesUriMap == genq ? value.addressesUriMap : addressesUriMap as Map<Uri, Address>,
-      addressesMapNullableValue: addressesMapNullableValue == genq ? value.addressesMapNullableValue : addressesMapNullableValue as Map<String, Address?>,
+      addressesList: addressesList == genq ? __value.addressesList : addressesList as List<Address>,
+      addressesListNullable: addressesListNullable == genq ? __value.addressesListNullable : addressesListNullable as List<Address?>,
+      addressesSet: addressesSet == genq ? __value.addressesSet : addressesSet as Set<Address>,
+      addressesSetNullable: addressesSetNullable == genq ? __value.addressesSetNullable : addressesSetNullable as Set<Address?>,
+      addressesMap: addressesMap == genq ? __value.addressesMap : addressesMap as Map<String, Address>,
+      addressesUriMap: addressesUriMap == genq ? __value.addressesUriMap : addressesUriMap as Map<Uri, Address>,
+      addressesMapNullableValue: addressesMapNullableValue == genq ? __value.addressesMapNullableValue : addressesMapNullableValue as Map<String, Address?>,
     );
   }
 }
@@ -190,16 +190,16 @@ abstract class $AddressCopyWith {
 }
 
 class _$AddressCopyWithImpl implements $AddressCopyWith {
-  final _$Address value;
+  final _$Address __value;
 
-  _$AddressCopyWithImpl(this.value);
+  _$AddressCopyWithImpl(this.__value);
 
   @override
   Address call({
     Object? street = genq,
   }) {
     return Address(
-      street: street == genq ? value.street : street as String,
+      street: street == genq ? __value.street : street as String,
     );
   }
 }

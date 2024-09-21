@@ -46,16 +46,16 @@ abstract class $UserCopyWith {
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
     Object? data = genq,
   }) {
     return User(
-      data: data == genq ? value.data : data as T,
+      data: data == genq ? __value.data : data as T,
     );
   }
 }

@@ -46,16 +46,16 @@ abstract class $TestCopyWith {
 }
 
 class _$TestCopyWithImpl implements $TestCopyWith {
-  final _$Test value;
+  final _$Test __value;
 
-  _$TestCopyWithImpl(this.value);
+  _$TestCopyWithImpl(this.__value);
 
   @override
   Test call({
     Object? param1 = genq,
   }) {
     return Test(
-      param1: param1 == genq ? value.param1 : param1 as int,
+      param1: param1 == genq ? __value.param1 : param1 as int,
     );
   }
 }

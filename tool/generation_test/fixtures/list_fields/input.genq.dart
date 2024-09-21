@@ -54,9 +54,9 @@ abstract class $ShoppingCartCopyWith {
 }
 
 class _$ShoppingCartCopyWithImpl implements $ShoppingCartCopyWith {
-  final _$ShoppingCart value;
+  final _$ShoppingCart __value;
 
-  _$ShoppingCartCopyWithImpl(this.value);
+  _$ShoppingCartCopyWithImpl(this.__value);
 
   @override
   ShoppingCart call({
@@ -64,8 +64,8 @@ class _$ShoppingCartCopyWithImpl implements $ShoppingCartCopyWith {
     Object? items = genq,
   }) {
     return ShoppingCart(
-      ownerName: ownerName == genq ? value.ownerName : ownerName as String,
-      items: items == genq ? value.items : items as List<String>,
+      ownerName: ownerName == genq ? __value.ownerName : ownerName as String,
+      items: items == genq ? __value.items : items as List<String>,
     );
   }
 }
