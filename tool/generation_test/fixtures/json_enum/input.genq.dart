@@ -70,9 +70,9 @@ abstract class $UserCopyWith {
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
@@ -82,10 +82,10 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? status = genq,
   }) {
     return User(
-      name: name == genq ? value.name : name as String,
-      age: age == genq ? value.age : age as int?,
-      registered: registered == genq ? value.registered : registered as bool,
-      status: status == genq ? value.status : status as UserStatus?,
+      name: name == genq ? __value.name : name as String,
+      age: age == genq ? __value.age : age as int?,
+      registered: registered == genq ? __value.registered : registered as bool,
+      status: status == genq ? __value.status : status as UserStatus?,
     );
   }
 }

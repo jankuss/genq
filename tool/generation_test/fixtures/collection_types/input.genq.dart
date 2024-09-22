@@ -62,9 +62,9 @@ abstract class $UserCopyWith {
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
@@ -73,9 +73,9 @@ class _$UserCopyWithImpl implements $UserCopyWith {
     Object? ages = genq,
   }) {
     return User(
-      names: names == genq ? value.names : names as List<String>,
-      properties: properties == genq ? value.properties : properties as Map<String, dynamic>,
-      ages: ages == genq ? value.ages : ages as Set<int>,
+      names: names == genq ? __value.names : names as List<String>,
+      properties: properties == genq ? __value.properties : properties as Map<String, dynamic>,
+      ages: ages == genq ? __value.ages : ages as Set<int>,
     );
   }
 }

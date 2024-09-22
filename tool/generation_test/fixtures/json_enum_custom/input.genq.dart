@@ -62,9 +62,9 @@ abstract class $AccountCopyWith {
 }
 
 class _$AccountCopyWithImpl implements $AccountCopyWith {
-  final _$Account value;
+  final _$Account __value;
 
-  _$AccountCopyWithImpl(this.value);
+  _$AccountCopyWithImpl(this.__value);
 
   @override
   Account call({
@@ -73,9 +73,9 @@ class _$AccountCopyWithImpl implements $AccountCopyWith {
     Object? age = genq,
   }) {
     return Account(
-      email: email == genq ? value.email : email as String,
-      accountType: accountType == genq ? value.accountType : accountType as Deez,
-      age: age == genq ? value.age : age as int,
+      email: email == genq ? __value.email : email as String,
+      accountType: accountType == genq ? __value.accountType : accountType as Deez,
+      age: age == genq ? __value.age : age as int,
     );
   }
 }

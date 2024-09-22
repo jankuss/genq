@@ -4,6 +4,7 @@ mixin _$User {
   String get name => throw UnimplementedError();
   int? get age => throw UnimplementedError();
   bool get registered => throw UnimplementedError();
+  double get value => throw UnimplementedError();
   String get enumReservedName => throw UnimplementedError();
   String get classReservedName => throw UnimplementedError();
 
@@ -21,6 +22,9 @@ class _User implements User {
   final bool registered;
 
   @override
+  final double value;
+
+  @override
   final String enumReservedName;
 
   @override
@@ -30,6 +34,7 @@ class _User implements User {
     required this.name,
     required this.age,
     required this.registered,
+    required this.value,
     required this.enumReservedName,
     required this.classReservedName,
   });
@@ -39,7 +44,7 @@ class _User implements User {
 
   @override
   String toString() {
-    return "User(name: $name, age: $age, registered: $registered, enumReservedName: $enumReservedName, classReservedName: $classReservedName)";
+    return "User(name: $name, age: $age, registered: $registered, value: $value, enumReservedName: $enumReservedName, classReservedName: $classReservedName)";
   }
 
   @override
@@ -49,6 +54,7 @@ class _User implements User {
     if (!identical(other.name, name) && other.name != name) return false;
     if (!identical(other.age, age) && other.age != age) return false;
     if (!identical(other.registered, registered) && other.registered != registered) return false;
+    if (!identical(other.value, value) && other.value != value) return false;
     if (!identical(other.enumReservedName, enumReservedName) && other.enumReservedName != enumReservedName) return false;
     if (!identical(other.classReservedName, classReservedName) && other.classReservedName != classReservedName) return false;
     return true;
@@ -61,6 +67,7 @@ class _User implements User {
       name,
       age,
       registered,
+      value,
       enumReservedName,
       classReservedName,
     );
@@ -72,30 +79,33 @@ abstract class $UserCopyWith {
     String name,
     int? age,
     bool registered,
+    double value,
     String enumReservedName,
     String classReservedName,
   });
 }
 
 class _$UserCopyWithImpl implements $UserCopyWith {
-  final _$User value;
+  final _$User __value;
 
-  _$UserCopyWithImpl(this.value);
+  _$UserCopyWithImpl(this.__value);
 
   @override
   User call({
     Object? name = genq,
     Object? age = genq,
     Object? registered = genq,
+    Object? value = genq,
     Object? enumReservedName = genq,
     Object? classReservedName = genq,
   }) {
     return User(
-      name: name == genq ? value.name : name as String,
-      age: age == genq ? value.age : age as int?,
-      registered: registered == genq ? value.registered : registered as bool,
-      enumReservedName: enumReservedName == genq ? value.enumReservedName : enumReservedName as String,
-      classReservedName: classReservedName == genq ? value.classReservedName : classReservedName as String,
+      name: name == genq ? __value.name : name as String,
+      age: age == genq ? __value.age : age as int?,
+      registered: registered == genq ? __value.registered : registered as bool,
+      value: value == genq ? __value.value : value as double,
+      enumReservedName: enumReservedName == genq ? __value.enumReservedName : enumReservedName as String,
+      classReservedName: classReservedName == genq ? __value.classReservedName : classReservedName as String,
     );
   }
 }
