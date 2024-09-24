@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/farmergreg/rfsnotify"
 	"gopkg.in/fsnotify.v1"
