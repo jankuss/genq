@@ -95,8 +95,8 @@ func generateWatchMode(path string, format bool) {
 				continue
 			}
 
-			if strings.HasSuffix(event.Name, ".dart~") {
-				// Ignore temporary files
+			if !strings.HasSuffix(event.Name, ".dart") {
+				// only dart files
 				continue
 			}
 
