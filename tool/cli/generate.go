@@ -83,7 +83,6 @@ func generateWatchMode(path string, format bool) {
 	}
 
 	watcher.AddRecursive(path)
-	lastGeneratedMap := make(map[string]time.Time)
 
 	for {
 		select {
@@ -102,8 +101,6 @@ func generateWatchMode(path string, format bool) {
 			}
 
 			if event.Op&fsnotify.Write != 0 || event.Op&fsnotify.Create != 0 || event.Op&fsnotify.Rename != 0 {
-				lastGeneratedMap[event.Name] = time.Now()
-
 				i := processJob(job{path: event.Name})
 				if i.err != nil {
 					continue
