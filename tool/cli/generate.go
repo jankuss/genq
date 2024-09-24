@@ -83,7 +83,7 @@ func generateWatchMode(path string, format bool) {
 	}
 
 	watcher.AddRecursive(path)
-  lastGeneratedMap := make(map[string]time.Time)
+	lastGeneratedMap := make(map[string]time.Time)
 
 	for {
 		select {
@@ -96,19 +96,18 @@ func generateWatchMode(path string, format bool) {
 				continue
 			}
 
-      if strings.HasSuffix(event.Name, ".dart~") {
-        // Ignore temporary files
-        continue
-      }
-
+			if strings.HasSuffix(event.Name, ".dart~") {
+				// Ignore temporary files
+				continue
+			}
 
 			if event.Op&fsnotify.Write != 0 || event.Op&fsnotify.Create != 0 || event.Op&fsnotify.Rename != 0 {
-        lastGeneratedMap[event.Name] = time.Now()
+				lastGeneratedMap[event.Name] = time.Now()
 
 				i := processJob(job{path: event.Name})
-        if i.err != nil {
-          continue;
-        }
+				if i.err != nil {
+					continue
+				}
 
 				if !i.res.Noop {
 					fmt.Printf("📝 Generated %s\n", i.res.OutputFile)
@@ -121,7 +120,7 @@ func generateWatchMode(path string, format bool) {
 				}
 
 				if !i.res.Noop && format {
-			    fmt.Printf("ℹ️ Running 'dart format' on 1 file\n")
+					fmt.Printf("ℹ️ Running 'dart format' on 1 file\n")
 					args := []string{"format", i.res.OutputFile}
 					exec.Command("dart", args...).Run()
 				}

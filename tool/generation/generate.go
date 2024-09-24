@@ -33,7 +33,7 @@ func GetContextForPosition(input string, pos int) ContextForPosition {
 	}
 
 	// Check if pos + 1 is out of bounds
-	if pos + 1 < len(input) {
+	if pos+1 < len(input) {
 		for _, value := range input[pos+1:] {
 			if value == '\n' {
 				break
