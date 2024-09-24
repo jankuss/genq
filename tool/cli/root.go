@@ -26,6 +26,11 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 
+		watch, err := cmd.Flags().GetBool("watch")
+		if err != nil {
+			panic(err)
+		}
+
 		fmt.Println("   __ _  ___ _ __   __ _ ")
 		fmt.Println("  / _` |/ _ \\ '_ \\ / _` |")
 		fmt.Println(" | (_| |  __/ | | | (_| |")
@@ -38,7 +43,11 @@ var rootCmd = &cobra.Command{
 		fmt.Println("===================================================")
 		fmt.Println()
 
-		generate(inputPath, format)
+		if watch {
+			generateWatchMode(inputPath, format)
+		} else {
+			generate(inputPath, format)
+		}
 	},
 }
 
@@ -46,6 +55,7 @@ func Execute() {
 	rootCmd.Flags().StringP("input", "i", ".", "The input file or directory to generate code from")
 	rootCmd.Flags().BoolP("format", "f", false, "Format the generated code with dart format")
 	rootCmd.Flags().Bool("version", false, "Prints the version of genq")
+	rootCmd.Flags().BoolP("watch", "w", false, "Watch the input file or directory for changes")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

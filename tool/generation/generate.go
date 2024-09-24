@@ -32,12 +32,15 @@ func GetContextForPosition(input string, pos int) ContextForPosition {
 		posInLine++
 	}
 
-	for _, value := range input[pos+1:] {
-		if value == '\n' {
-			break
-		}
+	// Check if pos + 1 is out of bounds
+	if pos + 1 < len(input) {
+		for _, value := range input[pos+1:] {
+			if value == '\n' {
+				break
+			}
 
-		lineString = lineString + string(value)
+			lineString = lineString + string(value)
+		}
 	}
 
 	return ContextForPosition{
