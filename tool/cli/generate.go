@@ -131,18 +131,18 @@ func generateWatchMode(path string, format bool) {
 func generate(path string, format bool) {
 	fmt.Println("ℹ️ Generating code for:", path)
 
-  // Before anything is put into the jobs channel, we need to:
-  // 1. Spawn a number for workers, which will drain the jobs channel. This needs
-  //    to be done before we start putting jobs into the channel, otherwise sending
-  //    to the jobs channel will block.
-  // 2. Call messageProcessor.start(), which will start a goroutine to process the
-  //    messages channel (the results of the jobs). This also needs to be done before
-  //    we start putting jobs into the channel, otherwise sending to the messages channel (when a job is done)
-  //    will block.
-  // After all of that setup, we can start putting jobs into the jobs channel.
-  // The job will get picked up by a worker, processed, and the result will be sent to the messages channel.
-  // Finally, we call messageProcessor.wait(), which will close the jobs channel once all jobs have been added and received, 
-  // and wait for all messages to be processed.
+	// Before anything is put into the jobs channel, we need to:
+	// 1. Spawn a number for workers, which will drain the jobs channel. This needs
+	//    to be done before we start putting jobs into the channel, otherwise sending
+	//    to the jobs channel will block.
+	// 2. Call messageProcessor.start(), which will start a goroutine to process the
+	//    messages channel (the results of the jobs). This also needs to be done before
+	//    we start putting jobs into the channel, otherwise sending to the messages channel (when a job is done)
+	//    will block.
+	// After all of that setup, we can start putting jobs into the jobs channel.
+	// The job will get picked up by a worker, processed, and the result will be sent to the messages channel.
+	// Finally, we call messageProcessor.wait(), which will close the jobs channel once all jobs have been added and received,
+	// and wait for all messages to be processed.
 	workerCount := runtime.NumCPU()
 	messageProcessor := newMessageProcessor(format)
 
