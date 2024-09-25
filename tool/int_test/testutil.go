@@ -3,6 +3,7 @@ package inttest
 import (
 	"fmt"
 	"os"
+	"testing"
 )
 
 func addFile(path string, content string) {
@@ -35,5 +36,16 @@ func teardown() {
 	err := os.RemoveAll("sut")
 	if err != nil {
 		panic(err)
+	}
+}
+
+func assertFileWithContent(t *testing.T, path string) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("Did not expect error: %s", err)
+	}
+
+	if len(content) == 0 {
+		t.Fatalf("Expected file '%s' to contain content", path)
 	}
 }
