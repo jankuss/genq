@@ -131,26 +131,86 @@ func generateWatchMode(path string, format bool) {
 func generate(path string, format bool) {
 	fmt.Println("ℹ️ Generating code for:", path)
 
-	// Worker count is CPU count
+  // Before anything is put into the jobs channel, we need to:
+  // 1. Spawn a number for workers, which will drain the jobs channel. This needs
+  //    to be done before we start putting jobs into the channel, otherwise sending
+  //    to the jobs channel will block.
+  // 2. Call messageProcessor.start(), which will start a goroutine to process the
+  //    messages channel (the results of the jobs). This also needs to be done before
+  //    we start putting jobs into the channel, otherwise sending to the messages channel (when a job is done)
+  //    will block.
+  // After all of that setup, we can start putting jobs into the jobs channel.
+  // The job will get picked up by a worker, processed, and the result will be sent to the messages channel.
+  // Finally, we call messageProcessor.wait(), which will close the jobs channel once all jobs have been added and received, 
+  // and wait for all messages to be processed.
 	workerCount := runtime.NumCPU()
-	jobs := make(chan job)
-	messages := make(chan resWithPath)
+	messageProcessor := newMessageProcessor(format)
 
-	// Spawn {CPU count} workers to process jobs
 	for w := 0; w < workerCount; w++ {
-		go worker(jobs, messages)
+		go worker(messageProcessor.jobs, messageProcessor.messages)
 	}
 
-	wg := sync.WaitGroup{}
-	msgWg := sync.WaitGroup{}
+	messageProcessor.start()
 
-	msgWg.Add(1)
+	// Walk the directory and add jobs to the jobs channel
+	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		messageProcessor.addJob(job{path: path})
+		return nil
+	})
+
+	messageProcessor.wait()
+}
+
+func ReadString(p string) (string, error) {
+	b, err := os.ReadFile(p)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
+}
+
+type messageProcessor struct {
+	jobWg     *sync.WaitGroup
+	messageWg *sync.WaitGroup
+	messages  chan resWithPath
+	jobs      chan job
+	format    bool
+}
+
+func newMessageProcessor(format bool) *messageProcessor {
+	return &messageProcessor{jobWg: &sync.WaitGroup{}, messageWg: &sync.WaitGroup{}, messages: make(chan resWithPath), format: format, jobs: make(chan job)}
+}
+
+func (m *messageProcessor) addJob(job job) {
+	m.jobWg.Add(1)
+	m.jobs <- job
+}
+
+func (m *messageProcessor) wait() {
+	close(m.jobs)
+	m.jobWg.Wait()
+
+	close(m.messages)
+	m.messageWg.Wait()
+}
+
+func (m *messageProcessor) start() {
+	m.messageWg.Add(1)
 	go func() {
-		defer msgWg.Done()
+		defer m.messageWg.Done()
 		genCount := 0
 		dartArgs := []string{"format"}
-		for i := range messages {
-			wg.Done()
+		for i := range m.messages {
+			m.jobWg.Done()
 			genCount += i.res.GenCount
 
 			if i.err != nil {
@@ -174,42 +234,9 @@ func generate(path string, format bool) {
 
 		fmt.Printf("✅ Generated %d data classes\n", genCount)
 
-		if format {
+		if m.format {
 			fmt.Printf("ℹ️ Running 'dart format' on %d files\n", len(dartArgs)-1)
 			exec.Command("dart", dartArgs...).Run()
 		}
 	}()
-
-	// Collect jobs in slice
-	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		wg.Add(1)
-		jobs <- job{path: path}
-		return nil
-	})
-	close(jobs)
-
-	go func() {
-		// After all jobs produced a result, close the messages channel
-		wg.Wait()
-		close(messages)
-	}()
-
-	msgWg.Wait()
-}
-
-func ReadString(p string) (string, error) {
-	b, err := os.ReadFile(p)
-	if err != nil {
-		return "", err
-	}
-
-	return string(b), nil
 }
