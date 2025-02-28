@@ -137,11 +137,15 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 	params := []GenqNamedExpression{}
 	if p.lookahead == TOKEN_PAREN_START {
 		// Annotation is an invocation
-		p.eat(TOKEN_PAREN_START)
+		_, err := p.eat(TOKEN_PAREN_START)
+		if err != nil {
+			return GenqArgumentList{}, err
+		}
 
 		for p.lookahead != TOKEN_PAREN_END {
 			p.markRestorationPoint()
 			v, err := p.parseNamedAssignment()
+
 			if err == nil {
 				p.dontRestore()
 
@@ -165,7 +169,7 @@ func (p *Parser) parseArgumentList() (GenqArgumentList, *ParsingError) {
 			}
 		}
 
-		_, err := p.eat(TOKEN_PAREN_END)
+		_, err = p.eat(TOKEN_PAREN_END)
 		if err != nil {
 			return GenqArgumentList{}, err
 		}
@@ -192,6 +196,10 @@ func (p *Parser) parseAnnotation() (GenqAnnotation, *ParsingError) {
 	if p.lookahead == TOKEN_PAREN_START {
 		// Annotation is an invocation
 		argumentList, err = p.parseArgumentList()
+
+		if err != nil {
+			return GenqAnnotation{}, err
+		}
 	}
 
 	return GenqAnnotation{
@@ -254,6 +262,25 @@ func (p *Parser) parsePrimitive() (GenqValue, *ParsingError) {
 			RawValue: v,
 			IntValue: intVal,
 		}, nil
+	}
+
+	if p.lookahead == TOKEN_DECIMAL_NUMBER {
+		v, err := p.eat(TOKEN_DECIMAL_NUMBER)
+		if err != nil {
+			return GenqValue{}, err
+		}
+
+		floatVal, e := strconv.ParseFloat(v, 64)
+		if e != nil {
+			err := fmt.Errorf("Could not parse number: %s", v)
+			return GenqValue{}, p.produceError(err)
+		}
+
+		return GenqValue{
+			RawValue: v,
+			IntValue: int(floatVal),
+		}, nil
+
 	}
 
 	if p.lookahead == TOKEN_SINGLE_STRING || p.lookahead == TOKEN_DOUBLE_STRING {

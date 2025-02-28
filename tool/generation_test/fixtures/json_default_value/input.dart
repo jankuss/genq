@@ -7,6 +7,8 @@ class User with _$User {
   factory User({
     @JsonKey(name: 'full_name', defaultValue: 'Supername') required String name,
     @JsonKey(defaultValue: 999) required int? age,
+    @JsonKey(defaultValue: 99.9) required double? someDoubleValueNullable,
+    @JsonKey(name: 'some_double_value', defaultValue: 99.9) required double someDoubleValue,
     required bool registered,
   }) = _User;
 }
