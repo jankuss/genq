@@ -105,7 +105,7 @@ User $UserFromJson(Map<String, dynamic> json) {
     name: json['full_name'] == null ? 'Supername' : json['full_name'] as String,
     age: json['age'] == null ? 999 : (json['age'] as num).toInt(),
     someDoubleValueNullable: json['someDoubleValueNullable'] == null ? 99.9 : (json['someDoubleValueNullable'] as num).toDouble(),
-    someDoubleValue: json['some_double_value'] == null ? 99.9 : (json['some_double_value'] as num).toDouble(),
+    someDoubleValue: json['some_double_value'] == null ? 1234567.89123456789 : (json['some_double_value'] as num).toDouble(),
     registered: json['registered'] as bool,
   );
 }
