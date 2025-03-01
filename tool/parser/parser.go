@@ -270,15 +270,8 @@ func (p *Parser) parsePrimitive() (GenqValue, *ParsingError) {
 			return GenqValue{}, err
 		}
 
-		floatVal, e := strconv.ParseFloat(v, 64)
-		if e != nil {
-			err := fmt.Errorf("Could not parse number: %s", v)
-			return GenqValue{}, p.produceError(err)
-		}
-
 		return GenqValue{
 			RawValue: v,
-			IntValue: int(floatVal),
 		}, nil
 
 	}
