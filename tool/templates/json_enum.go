@@ -47,6 +47,7 @@ func TemplateJsonEnumToJson(str []string, classDecl GenqJsonEnum) []string {
 		}
 		str = append(str, indent(6, fmt.Sprintf("return %s;", jsonValue)))
 	}
+	str = append(str, indent(4, "// ignore: unreachable_switch_default"))
 	str = append(str, indent(4, fmt.Sprintf("default:")))
 	str = append(str, indent(6, fmt.Sprintf("throw UnsupportedError('Could not map $value to a JSON value');")))
 	str = append(str, indent(2, fmt.Sprintf("}")))

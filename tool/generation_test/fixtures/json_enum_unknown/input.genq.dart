@@ -113,6 +113,7 @@ Object $AccountTypeToJson(AccountType value) {
       return "vip";
     case AccountType.unknown:
       return "unknown";
+    // ignore: unreachable_switch_default
     default:
       throw UnsupportedError('Could not map $value to a JSON value');
   }
