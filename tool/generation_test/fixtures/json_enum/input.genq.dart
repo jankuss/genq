@@ -137,6 +137,7 @@ Object $UserStatusToJson(UserStatus value) {
       return 0;
     case UserStatus.blocked:
       return 1;
+    // ignore: unreachable_switch_default
     default:
       throw UnsupportedError('Could not map $value to a JSON value');
   }

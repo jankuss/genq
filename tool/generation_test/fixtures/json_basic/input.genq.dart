@@ -142,7 +142,7 @@ class _$UserCopyWithImpl implements $UserCopyWith {
       address: address == genq ? __value.address : address as Address?,
       birthday: birthday == genq ? __value.birthday : birthday as DateTime?,
       balance: balance == genq ? __value.balance : balance as BigInt?,
-      someObject: someObject == genq ? __value.someObject : someObject as Object?,
+      someObject: someObject == genq ? __value.someObject : someObject,
       someDynamic: someDynamic == genq ? __value.someDynamic : someDynamic as dynamic,
       someDoubleValue: someDoubleValue == genq ? __value.someDoubleValue : someDoubleValue as double,
       someDoubleValueNullable: someDoubleValueNullable == genq ? __value.someDoubleValueNullable : someDoubleValueNullable as double?,

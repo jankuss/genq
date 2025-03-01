@@ -37,7 +37,11 @@ func templateCopyWith(str []string, classDecl GenqClassDeclaration) []string {
 
 		str = append(str, indent(4, fmt.Sprintf("return %s(", classDecl.Name)))
 		for _, param := range classDecl.Constructor.ParamList.NamedParams {
-			str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? __value.%s : %s as %s,", param.Name, param.Name, param.Name, param.Name, param.ParamType.String())))
+			if param.ParamType.String() == "Object?" {
+				str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? __value.%s : %s,", param.Name, param.Name, param.Name, param.Name)))
+			} else {
+				str = append(str, indent(6, fmt.Sprintf("%s: %s == genq ? __value.%s : %s as %s,", param.Name, param.Name, param.Name, param.Name, param.ParamType.String())))
+			}
 		}
 		str = append(str, indent(4, fmt.Sprintf(");")))
 
